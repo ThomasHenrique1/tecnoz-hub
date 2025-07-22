@@ -1,131 +1,93 @@
-"use client"
+'use client';
 
-import { useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
-import { useRouter } from "next/navigation"
-import AdminRoute from "@/components/auth/AdminRoute"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { supabase } from '@/lib/supabaseClient';
+import { v4 as uuidv4 } from 'uuid';
 
-export default function NovoProdutoPage() {
-  const router = useRouter()
-  const [form, setForm] = useState({
-    nome: "",
-    descricao: "",
-    preco: "",
-    estoque: "",
-    imagem_url: "",
-  })
-  const [loading, setLoading] = useState(false)
+export default function NovoProduto() {
+  const [formData, setFormData] = useState({
+    nome: '',
+    descricao: '',
+    preco: '',
+    estoque: '',
+    categoria: '',
+  });
+  const [imagemFile, setImagemFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    setImagemFile(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+    setLoading(true);
 
-    // Validação simples
-    if (!form.nome || !form.preco) {
-      alert("Nome e preço são obrigatórios.")
-      return
+    let imagem_url = null;
+
+    // 1. Upload da imagem
+    if (imagemFile) {
+      const fileExt = imagemFile.name.split('.').pop();
+      const fileName = `${uuidv4()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('produtos')
+        .upload(filePath, imagemFile);
+
+      if (uploadError) {
+        alert('Erro ao fazer upload da imagem');
+        console.error(uploadError);
+        setLoading(false);
+        return;
+      }
+
+      // 2. Obter URL pública
+      const { data } = supabase.storage.from('produtos').getPublicUrl(filePath);
+      imagem_url = data.publicUrl;
     }
 
-    setLoading(true)
-
-    const { error } = await supabase.from("produtos").insert([
+    // 3. Inserir produto no banco
+    const { error } = await supabase.from('produtos').insert([
       {
-        nome: form.nome,
-        descricao: form.descricao,
-        preco: parseFloat(form.preco),
-        estoque: parseInt(form.estoque) || 0,
-        imagem_url: form.imagem_url || null,
+        ...formData,
+        preco: parseFloat(formData.preco),
+        estoque: parseInt(formData.estoque),
+        imagem_url,
       },
-    ])
-
-    setLoading(false)
+    ]);
 
     if (error) {
-      alert("Erro ao criar produto: " + error.message)
+      alert('Erro ao salvar produto');
+      console.error(error);
     } else {
-      alert("Produto criado com sucesso!")
-      router.push("/admin/produtos")
+      router.push('/admin/produtos');
     }
-  }
+
+    setLoading(false);
+  };
 
   return (
-    <AdminRoute>
-    <div className="p-6 max-w-md mx-auto">
+    <div className="max-w-xl mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Novo Produto</h1>
-
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-1 font-semibold">Nome</label>
-          <input
-            type="text"
-            name="nome"
-            value={form.nome}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 font-semibold">Descrição</label>
-          <textarea
-            name="descricao"
-            value={form.descricao}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            rows={3}
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 font-semibold">Preço (R$)</label>
-          <input
-            type="number"
-            step="0.01"
-            name="preco"
-            value={form.preco}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 font-semibold">Estoque</label>
-          <input
-            type="number"
-            name="estoque"
-            value={form.estoque}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            min={0}
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1 font-semibold">URL da Imagem</label>
-          <input
-            type="text"
-            name="imagem_url"
-            value={form.imagem_url}
-            onChange={handleChange}
-            placeholder="https://..."
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          {loading ? "Salvando..." : "Criar Produto"}
+        <input name="nome" placeholder="Nome" onChange={handleChange} required className="input input-bordered w-full" />
+        <textarea name="descricao" placeholder="Descrição" onChange={handleChange} required className="textarea textarea-bordered w-full" />
+        <input name="preco" type="number" step="0.01" placeholder="Preço" onChange={handleChange} required className="input input-bordered w-full" />
+        <input name="estoque" type="number" placeholder="Estoque" onChange={handleChange} required className="input input-bordered w-full" />
+        <input name="categoria" placeholder="Categoria" onChange={handleChange} required className="input input-bordered w-full" />
+        <input type="file" accept="image/*" onChange={handleFileChange} className="file-input w-full" />
+        <button type="submit" disabled={loading} className="btn btn-primary w-full">
+          {loading ? 'Salvando...' : 'Cadastrar Produto'}
         </button>
       </form>
     </div>
-    </AdminRoute>
-  )
+  );
 }
