@@ -12,7 +12,7 @@ export default function ProdutoDetalhes({ produto }) {
             : "https://via.placeholder.com/300x300?text=Sem+Imagem"
         }
         alt={produto.nome}
-        className="w-full md:w-80 h-80 object-cover rounded border"
+        className=" md:w-50 h-80 object-cover rounded border"
       />
 
       <div>

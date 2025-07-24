@@ -6,10 +6,11 @@ import Link from "next/link"
 import ProdutoDetalhes from "../ProdutoDetalhes"
 
 
-export const dynamic = "force-dynamic"
+export const dynamic = "force-dynamic" // Garante dados atualizados (SSR forçado)
 
 export default async function ProdutoPage({ params }) {
-  const { id } = params
+  const { id } = await params  // ✅ Corrigido: espera o params se for Promise
+
 
   const { data: produto, error } = await supabase
     .from("produtos")
