@@ -1,17 +1,12 @@
-
-import "./globals.css";
-
-export const metadata = {
-  title: "Tecnoz Hub",
-  description: "Seu mundo digital começa aqui",
-};
+import { CarrinhoProvider } from "@/context/CarrinhoContext"
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR" data-theme="light">
+    <html lang="pt-br">
       <body>
-        
-        <main className="p-4">{children}</main>
+        <CarrinhoProvider>
+          {children}
+        </CarrinhoProvider>
       </body>
     </html>
   )
