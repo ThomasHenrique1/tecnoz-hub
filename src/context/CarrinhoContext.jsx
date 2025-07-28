@@ -7,6 +7,8 @@ const CarrinhoContext = createContext()
 
 export const CarrinhoProvider = ({ children }) => {
   const [quantidade, setQuantidade] = useState(0)
+  const [animar, setAnimar] = useState(false)
+
 
   const atualizarQuantidade = async () => {
     const {
@@ -22,13 +24,20 @@ export const CarrinhoProvider = ({ children }) => {
       setQuantidade(total)
     }
   }
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAnimar(true)
+      setTimeout(() => setAnimar(false), 300)
+    }, 5000)
 
+    return () => clearInterval(interval)
+  }, [])
   useEffect(() => {
     atualizarQuantidade()
   }, [])
 
   return (
-    <CarrinhoContext.Provider value={{ quantidade, atualizarQuantidade }}>
+    <CarrinhoContext.Provider value={{ quantidade, atualizarQuantidade, animar }}>
       {children}
     </CarrinhoContext.Provider>
   )

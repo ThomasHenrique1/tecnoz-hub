@@ -11,30 +11,6 @@ export default function ProdutoDetalhes({ produto }) {
 
   const { atualizarQuantidade } = useCarrinho()
 
-const handleAddCarrinho = async () => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    alert("Você precisa estar logado para adicionar ao carrinho.")
-    return
-  }
-
-  const { error } = await supabase.from("carrinho").upsert({
-    usuario_id: user.id,
-    produto_id: produto.id,
-    quantidade: 1,
-  })
-
-  if (error) {
-    alert("Erro ao adicionar ao carrinho.")
-  } else {
-    await atualizarQuantidade()
-    alert("Produto adicionado com sucesso!")
-  }
-}
-
   const adicionarAoCarrinho = async () => {
     setAdicionando(true)
 
@@ -50,7 +26,7 @@ const handleAddCarrinho = async () => {
     }
 
     try {
-      // Verifica se o produto já está no carrinho do usuário
+      // Verifica se já existe no carrinho
       const { data: existente, error: buscaErro } = await supabase
         .from("carrinho")
         .select("id, quantidade")
@@ -63,7 +39,7 @@ const handleAddCarrinho = async () => {
       }
 
       if (existente) {
-        // Já existe, atualiza quantidade
+        // Atualiza quantidade
         const { error: updateError } = await supabase
           .from("carrinho")
           .update({ quantidade: existente.quantidade + 1 })
@@ -83,9 +59,10 @@ const handleAddCarrinho = async () => {
         if (insertError) throw insertError
       }
 
+      await atualizarQuantidade()
       alert("Produto adicionado ao carrinho!")
     } catch (err) {
-      console.error("Erro ao adicionar:", err)
+      console.error("Erro ao adicionar ao carrinho:", err)
       alert("Erro ao adicionar ao carrinho.")
     } finally {
       setAdicionando(false)
