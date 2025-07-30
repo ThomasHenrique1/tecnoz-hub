@@ -8,50 +8,32 @@ export default function AdminRoute({ children }) {
   const router = useRouter()
   const [isAdmin, setIsAdmin] = useState(null)
 
-  console.log("AdminRoute: componente renderizado") // Teste de renderização
-
   useEffect(() => {
-    console.log("AdminRoute: useEffect executado")
-
     const checkAdmin = async () => {
-      console.log("AdminRoute: iniciando checkAdmin")
+      const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
+      const session = sessionData?.session
 
-      const {
-        data: { user },
-        error: authError,
-      } = await supabase.auth.getUser()
-
-      console.log("AdminRoute: user =", user)
-      console.log("AdminRoute: authError =", authError)
-
-      if (authError || !user) {
-        console.warn("AdminRoute: não autenticado, redirecionando /login")
+      if (sessionError || !session?.user) {
         router.push("/login")
         return
       }
 
+      const userId = session.user.id
+      console.log("ID do usuário autenticado:", userId)
+
       const { data: usuarioData, error: usuarioError } = await supabase
         .from("usuarios")
         .select("tipo_usuario")
-        .eq("auth_id", user.id)
+        .eq("auth_id", userId)
         .single()
 
-      console.log("AdminRoute: usuarioData =", usuarioData)
-      console.log("AdminRoute: usuarioError =", usuarioError)
+      console.log("Usuário encontrado:", usuarioData)
 
-      if (usuarioError || !usuarioData) {
-        console.warn("AdminRoute: usuário inválido, redirecionando /")
+      if (usuarioError || !usuarioData || usuarioData.tipo_usuario !== "admin") {
         router.push("/")
         return
       }
 
-      if (usuarioData.tipo_usuario !== "admin") {
-        console.warn("AdminRoute: usuário não é admin, redirecionando /")
-        router.push("/")
-        return
-      }
-
-      console.log("AdminRoute: usuário é admin, liberando acesso")
       setIsAdmin(true)
     }
 

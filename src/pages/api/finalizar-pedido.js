@@ -5,7 +5,6 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: "Método não permitido" })
   }
 
-  // Obter usuário autenticado pelo token enviado no header (Authorization: Bearer ...)
   const token = req.headers.authorization?.split(" ")[1]
   if (!token) {
     return res.status(401).json({ error: "Não autorizado" })
@@ -17,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Buscar itens do carrinho do usuário
+    // Buscar itens do carrinho
     const { data: carrinhoItens, error: carrinhoError } = await supabase
       .from("carrinho")
       .select(`
@@ -32,11 +31,13 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: "Carrinho vazio" })
     }
 
-    // Calcular total e verificar estoque disponível
+    // Verificar estoques e calcular total
     let total = 0
     for (const item of carrinhoItens) {
       if (item.quantidade > item.produto.estoque) {
-        return res.status(400).json({ error: `Estoque insuficiente para o produto ${item.produto_id}` })
+        return res.status(400).json({
+          error: `Produto com estoque insuficiente (ID: ${item.produto_id})`
+        })
       }
       total += item.quantidade * item.produto.preco
     }
@@ -44,13 +45,7 @@ export default async function handler(req, res) {
     // Criar pedido
     const { data: pedido, error: pedidoError } = await supabase
       .from("pedidos")
-      .insert([
-        {
-          usuario_id: user.id,
-          total,
-          status: "pendente",
-        }
-      ])
+      .insert([{ usuario_id: user.id, total, status: "pendente" }])
       .select()
       .single()
 
@@ -64,26 +59,49 @@ export default async function handler(req, res) {
       preco_unitario: item.produto.preco,
     }))
 
-    const { error: itensError } = await supabase
-      .from("pedido_itens")
-      .insert(itensPedido)
+    const { error: itensError } = await supabase.from("pedido_itens").insert(itensPedido)
+    if (itensError) {
+      // rollback: excluir o pedido
+      await supabase.from("pedidos").delete().eq("id", pedido.id)
+      throw itensError
+    }
 
-    if (itensError) throw itensError
+    // Atualizar estoques
+    for (const item of carrinhoItens) {
+      const novoEstoque = item.produto.estoque - item.quantidade
+      const { error: estoqueError } = await supabase
+        .from("produtos")
+        .update({ estoque: novoEstoque })
+        .eq("id", item.produto_id)
 
-    // Limpar carrinho
-    const { error: deleteError } = await supabase
+      if (estoqueError) {
+        // rollback: excluir pedido + itens
+        await supabase.from("pedido_itens").delete().eq("pedido_id", pedido.id)
+        await supabase.from("pedidos").delete().eq("id", pedido.id)
+        throw estoqueError
+      }
+    }
+
+    // Limpar carrinho do usuário
+    const { error: carrinhoErrorFinal } = await supabase
       .from("carrinho")
       .delete()
       .eq("usuario_id", user.id)
 
-    if (deleteError) throw deleteError
+    if (carrinhoErrorFinal) {
+      // rollback: desfazer tudo anterior
+      await supabase.from("pedido_itens").delete().eq("pedido_id", pedido.id)
+      await supabase.from("pedidos").delete().eq("id", pedido.id)
+      throw carrinhoErrorFinal
+    }
 
-    // (Opcional) Atualizar estoque - se desejar, podemos implementar depois
-
-    return res.status(200).json({ message: "Pedido finalizado com sucesso!", pedido_id: pedido.id })
+    return res.status(200).json({
+      message: "Pedido finalizado com sucesso!",
+      pedido_id: pedido.id,
+    })
 
   } catch (error) {
     console.error("Erro ao finalizar pedido:", error)
-    return res.status(500).json({ error: "Erro interno" })
+    return res.status(500).json({ error: "Erro ao processar o pedido." })
   }
 }

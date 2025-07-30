@@ -28,6 +28,7 @@ export default function LoginForm() {
     }
 
     // Login bem-sucedido, redireciona para página protegida
+    await router.refresh()
     router.push('/perfil')
   }
 
