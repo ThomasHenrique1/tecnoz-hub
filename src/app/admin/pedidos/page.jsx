@@ -122,11 +122,16 @@ export default function AdminPedidos() {
                             <img 
                                 src={pedido.usuario.foto_perfil} 
                                 alt={pedido.usuario.nome}
-                                className="w-0 h-0 object-cover"
-                                onError={(e) => {
-                                e.target.style.display = 'none'
+                                style={{
+                                  width: '50px',
+                                  height: '50px',
+                                  objectFit: 'cover',
+                                  borderRadius: '50%'
                                 }}
-                            />
+                                onError={(e) => {
+                                  e.target.style.display = 'none'
+                                }}
+                              />
                             </div>
                         </div>
                         )}
