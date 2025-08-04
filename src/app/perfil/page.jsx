@@ -216,7 +216,7 @@ export default function PerfilPage() {
           type="file"
           accept="image/*"
           onChange={handleFileChange}
-          className="mt-2"
+          className="w-8 h-8 border border-gray-300 rounded mt-2"
         />
         <button
           onClick={handleUpload}
