@@ -25,7 +25,7 @@ export default function AddToCartButton({ produtoId }) {
       produto_id: produtoId,
       quantidade: 1,
     }, {
-      onConflict: "usuario_id,produto_id" // se já existir, não duplica
+      onConflict: "usuario_id,produto_id"
     })
 
     if (error) {
@@ -42,9 +42,21 @@ export default function AddToCartButton({ produtoId }) {
     <button
       onClick={handleAddToCart}
       disabled={loading}
-      className="mt-6 bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition disabled:opacity-50"
+      className="btn btn-primary mt-6 w-full md:w-auto"
     >
-      {loading ? "Adicionando..." : "Adicionar ao Carrinho"}
+      {loading ? (
+        <>
+          <span className="loading loading-spinner loading-sm"></span>
+          Adicionando...
+        </>
+      ) : (
+        <>
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg>
+          Adicionar ao Carrinho
+        </>
+      )}
     </button>
   )
 }
