@@ -1,55 +1,67 @@
 "use client"
 
-import { useCarrinho } from "@/context/CarrinhoContext"
-import Link from "next/link"
 import { useEffect, useState } from "react"
-import { useRouter } from "next/navigation"
 import { supabase } from "@/lib/supabaseClient"
+import NavLogo from "./NavLogo/NavLogo"
+import NavLinks from "./NavLinks/NavLinks"
+import NavSearch from "./NavSearch/NavSearch"
+import NavCart from "./NavCart/NavCart"
+import NavProfile from "./NavProfile/NavProfile"
+import NavAuth from "./NavAuth/NavAuth"
+
+
 
 export default function Navbar() {
-  const { quantidade, animar } = useCarrinho()
   const [user, setUser] = useState(null)
-  const router = useRouter()
+  const [fotoPerfil, setFotoPerfil] = useState(null)
 
   useEffect(() => {
-    const verificarUsuario = async () => {
-      const { data, error } = await supabase.auth.getUser()
-      if (data?.user) setUser(data.user)
-      else setUser(null)
+    const buscarUsuario = async () => {
+      const { data } = await supabase.auth.getUser()
+      const usuario = data?.user || null
+      setUser(usuario)
+
+      if (usuario) {
+        const { data: perfilData, error } = await supabase
+          .from("usuarios")
+          .select("foto_perfil")
+          .or(`auth_id.eq.${usuario.id},email.eq.${usuario.email}`)
+          .single()
+
+        if (!error && perfilData?.foto_perfil) {
+          if (perfilData.foto_perfil.startsWith('http')) {
+            setFotoPerfil(perfilData.foto_perfil)
+          } else {
+            const { data: { publicUrl } } = supabase
+              .storage
+              .from('avatars')
+              .getPublicUrl(perfilData.foto_perfil)
+            setFotoPerfil(publicUrl)
+          }
+        }
+      }
     }
 
-    verificarUsuario()
+    buscarUsuario()
+
+    const { data: authListener } = supabase.auth.onAuthStateChange(async () => {
+      await buscarUsuario()
+    })
+
+    return () => authListener?.subscription.unsubscribe()
   }, [])
 
-  const handleCarrinhoClick = () => {
-    if (!user) {
-      alert("Você precisa estar logado para acessar o carrinho.")
-      router.push("/login")
-    } else {
-      router.push("/carrinho")
-    }
-  }
-
   return (
-    <nav className="flex items-center justify-between px-6 py-4 bg-gray-900 text-white">
-      <Link href="/" className="text-xl font-bold">TecnozHub</Link>
-
-      <div className="flex items-center gap-6">
-        <Link href="/produtos">Produtos</Link>
-        <Link href="/pedidos">Pedidos</Link>
-        <button onClick={handleCarrinhoClick} className="relative">
-          🛒 Carrinho
-          {quantidade > 0 && (
-            <span
-              className={`absolute -top-2 -right-3 bg-red-600 text-xs w-5 h-5 flex items-center justify-center rounded-full transition-transform duration-300 ${
-                animar ? "scale-125" : "scale-100"
-              }`}
-            >
-              {quantidade}
-            </span>
-          )}
-        </button>
+    <div className="navbar bg-base-200 px-4 sm:px-6 py-3 gap-4 sticky top-0 z-50 shadow-sm">
+      <NavLogo />
+      <NavLinks />
+      
+      <div className="flex gap-2 sm:gap-4 items-center">
+        <NavSearch />
+        <NavCart user={user} />
+        <NavProfile user={user} fotoPerfil={fotoPerfil} />
+        <NavAuth user={user} />
       </div>
-    </nav>
+    </div>
   )
 }
