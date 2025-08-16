@@ -1,230 +1,190 @@
-"use client"
+'use client'
 
-import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
-import { useRouter } from "next/navigation"
+import { useEffect, useState, useCallback } from 'react'
+import { supabase } from '@/lib/supabaseClient'
+import { useRouter } from 'next/navigation'
+import { ProfileAvatar } from '@/components/perfil/ProfileAvatar/ProfileAvatar'
+import { ProfileFormField } from '@/components/perfil/ProfileFormField/ProfileFormField'
+
+const initialFormState = {
+  nome: '',
+  sobrenome: '',
+  telefone: '',
+  data_nascimento: ''
+}
 
 export default function PerfilPage() {
   const router = useRouter()
   const [usuario, setUsuario] = useState(null)
   const [loading, setLoading] = useState(true)
   const [selectedFile, setSelectedFile] = useState(null)
-  const [form, setForm] = useState({
-    nome: "",
-    sobrenome: "",
-    telefone: "",
-    data_nascimento: "",
-  })
+  const [form, setForm] = useState(initialFormState)
 
-  // Buscar dados do usuário autenticado e popular form
-  useEffect(() => {
-    const fetchPerfil = async () => {
-      const {
-        data: { user },
-        error,
-      } = await supabase.auth.getUser()
-
+  // Busca os dados do perfil
+  const fetchPerfil = useCallback(async () => {
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser()
       if (error || !user) {
-        router.push("/login")
+        router.push('/login')
         return
       }
 
       const { data, error: userError } = await supabase
-        .from("usuarios")
-        .select("*")
-        .eq("auth_id", user.id)
+        .from('usuarios')
+        .select('*')
+        .eq('auth_id', user.id)
         .single()
 
-      if (userError) {
-        console.error("Erro ao buscar dados:", userError)
-      } else {
-        setUsuario(data)
-        setForm({
-          nome: data.nome || "",
-          sobrenome: data.sobrenome || "",
-          telefone: data.telefone || "",
-          data_nascimento: data.data_nascimento ? data.data_nascimento.slice(0, 10) : "",
-        })
-      }
+      if (userError) throw userError
 
+      setUsuario(data)
+      setForm({
+        nome: data.nome || '',
+        sobrenome: data.sobrenome || '',
+        telefone: data.telefone || '',
+        data_nascimento: data.data_nascimento?.slice(0, 10) || ''
+      })
+    } catch (error) {
+      console.error('Erro ao buscar dados:', error)
+    } finally {
       setLoading(false)
     }
-
-    fetchPerfil()
   }, [router])
 
+  useEffect(() => {
+    fetchPerfil()
+  }, [fetchPerfil])
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+    const { name, value } = e.target
+    setForm(prev => ({ ...prev, [name]: value }))
   }
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser()
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) return
 
-    const { error } = await supabase
-      .from("usuarios")
-      .update({
-        nome: form.nome,
-        sobrenome: form.sobrenome,
-        telefone: form.telefone,
-        data_nascimento: form.data_nascimento,
-      })
-      .eq("auth_id", user.id)
+      const { error } = await supabase
+        .from('usuarios')
+        .update(form)
+        .eq('auth_id', user.id)
 
-    if (error) {
-      alert("Erro ao atualizar dados: " + error.message)
-      return
+      if (error) throw error
+
+      alert('Perfil atualizado com sucesso!')
+      setUsuario(prev => prev ? { ...prev, ...form } : null)
+    } catch (error) {
+      alert('Erro ao atualizar dados: ' + error.message)
     }
-
-    alert("Perfil atualizado com sucesso!")
-    // Atualiza estado local para mostrar novas infos imediatamente
-    setUsuario((old) => ({ ...old, ...form }))
   }
 
-  const handleFileChange = (e) => {
-    setSelectedFile(e.target.files[0])
+  const handleFileUpload = async () => {
+    if (!selectedFile || !usuario) return
+
+    try {
+      const { data: { user }, error } = await supabase.auth.getUser()
+      if (error || !user) return
+
+      const fileExt = selectedFile.name.split('.').pop()
+      const fileName = `${user.id}.${fileExt}`
+      
+      // Upload da imagem
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(fileName, selectedFile, { upsert: true })
+      
+      if (uploadError) throw uploadError
+
+      // Obtém URL pública
+      const { data: { publicUrl } } = supabase.storage
+        .from('avatars')
+        .getPublicUrl(fileName)
+
+      // Atualiza perfil com a nova URL
+      const { error: updateError } = await supabase
+        .from('usuarios')
+        .update({ foto_perfil: publicUrl })
+        .eq('auth_id', user.id)
+
+      if (updateError) throw updateError
+
+      alert('Imagem enviada com sucesso!')
+      setUsuario(prev => prev ? { ...prev, foto_perfil: publicUrl } : null)
+      setSelectedFile(null)
+    } catch (error) {
+      console.error('Erro no upload:', error)
+      alert('Erro ao processar imagem: ' + error.message)
+    }
   }
 
-  const handleUpload = async () => {
-    if (!selectedFile) return alert("Selecione uma imagem!")
+  if (loading) return (
+    <div className="flex justify-center p-8">
+      <span className="loading loading-spinner loading-lg"></span>
+    </div>
+  )
 
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser()
-
-    if (error || !user) {
-      return alert("Erro de autenticação. Faça login novamente.")
-    }
-
-    const fileExt = selectedFile.name.split(".").pop()
-    const fileName = `${user.id}.${fileExt}`
-    const filePath = fileName
-
-    // 1. Upload
-    const { error: uploadError } = await supabase.storage
-      .from("avatars")
-      .upload(filePath, selectedFile, { upsert: true })
-
-    if (uploadError) {
-      console.error("Erro upload:", uploadError)
-      return alert("Erro ao enviar imagem.")
-    }
-
-    // 2. Gerar URL pública
-    const { data: publicData } = supabase.storage.from("avatars").getPublicUrl(filePath)
-    const imageUrl = publicData?.publicUrl
-
-    if (!imageUrl) {
-      return alert("Erro ao obter URL da imagem.")
-    }
-
-    // 3. Atualizar banco
-    const { error: updateError } = await supabase
-      .from("usuarios")
-      .update({ foto_perfil: imageUrl })
-      .eq("auth_id", user.id)
-
-    if (updateError) {
-      console.error("Erro ao atualizar imagem:", updateError)
-      return alert("Erro ao salvar imagem.")
-    }
-
-    alert("Imagem enviada com sucesso!")
-    setUsuario((old) => ({ ...old, foto_perfil: imageUrl }))
-    setSelectedFile(null)
-  }
-
-  if (loading) return <p className="p-4">Carregando...</p>
-  if (!usuario) return <p className="p-4">Usuário não encontrado.</p>
+  if (!usuario) return (
+    <p className="p-8 text-center">Usuário não encontrado</p>
+  )
 
   return (
-    <div className="p-6 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Perfil do Usuário</h1>
+    <div className="container mx-auto p-4 max-w-2xl">
+      <div className="card bg-base-100 shadow-xl">
+        <div className="card-body">
+          <h1 className="card-title text-2xl font-bold mb-6">Meu Perfil</h1>
+          
+          <ProfileAvatar
+            src={usuario.foto_perfil}
+            onFileChange={setSelectedFile}
+            onUpload={handleFileUpload}
+            selectedFile={selectedFile}
+          />
 
-      {/* Imagem de perfil */}
-      {usuario.foto_perfil ? (
-        <img
-          src={usuario.foto_perfil}
-          alt="Foto de perfil"
-          className="w-24 h-24 rounded-full object-cover mb-4"
-        />
-      ) : (
-        <div className="w-24 h-24 rounded-full bg-gray-300 flex items-center justify-center mb-4 text-3xl">
-          👤
-        </div>
-      )}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <ProfileFormField
+              label="Nome"
+              name="nome"
+              type="text"
+              value={form.nome}
+              onChange={handleChange}
+              required
+            />
 
-      {/* Formulário de edição */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-1 font-semibold">Nome</label>
-          <input
-            type="text"
-            name="nome"
-            value={form.nome}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-semibold">Sobrenome</label>
-          <input
-            type="text"
-            name="sobrenome"
-            value={form.sobrenome}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-semibold">Telefone</label>
-          <input
-            type="tel"
-            name="telefone"
-            value={form.telefone}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <div>
-          <label className="block mb-1 font-semibold">Data de Nascimento</label>
-          <input
-            type="date"
-            name="data_nascimento"
-            value={form.data_nascimento}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
-        <button
-          type="submit"
-          className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700"
-        >
-          Salvar Alterações
-        </button>
-      </form>
+            <ProfileFormField
+              label="Sobrenome"
+              name="sobrenome"
+              type="text"
+              value={form.sobrenome}
+              onChange={handleChange}
+              required
+            />
 
-      {/* Upload de imagem */}
-      <div className="mt-6">
-        <label className="block text-sm font-medium text-gray-700">Alterar Foto</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="w-8 h-8 border border-gray-300 rounded mt-2"
-        />
-        <button
-          onClick={handleUpload}
-          className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-          disabled={!selectedFile}
-        >
-          Enviar Imagem
-        </button>
+            <ProfileFormField
+              label="Telefone"
+              name="telefone"
+              type="tel"
+              value={form.telefone}
+              onChange={handleChange}
+            />
+
+            <ProfileFormField
+              label="Data de Nascimento"
+              name="data_nascimento"
+              type="date"
+              value={form.data_nascimento}
+              onChange={handleChange}
+            />
+
+            <div className="card-actions justify-end mt-6">
+              <button type="submit" className="btn btn-primary">
+                Salvar Alterações
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   )
