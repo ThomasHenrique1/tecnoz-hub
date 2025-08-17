@@ -2,43 +2,62 @@
 
 import { useState } from 'react'
 import { supabase } from '@/lib/supabaseClient'
-import FormInput from '@/components/SignUp/FormInput/FormInput'
-import SuccessMessage from '@/components/SignUp/SuccessMessage/SuccessMessage'
-import ErrorMessage from '@/components/SignUp/ErrorMessage/ErrorMessage'
-import SubmitButton from '@/components/SignUp/SubmitButton/SubmitButton'
 import Link from 'next/link'
+import SubmitButton from '../SignUp/SubmitButton/SubmitButton'
+import ErrorMessage from '../SignUp/ErrorMessage/ErrorMessage'
+import SuccessMessage from '../SignUp/SuccessMessage/SuccessMessage'
+import FormInput from '../SignUp/FormInput/FormInput'
+import { BackgroundParticles } from '../ui/BackgroundParticles'
 
 export default function SignupPage() {
+  const [registrationSuccess, setRegistrationSuccess] = useState(false)
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-base-100 to-base-200 flex items-center justify-center p-4">
-      <div className="w-full max-w-md bg-base-100 rounded-xl shadow-2xl overflow-hidden">
-        {/* Cabeçalho */}
-        <div className="bg-primary text-primary-content p-6 text-center">
-          <h1 className="text-3xl font-bold">Cadastro</h1>
-          <p className="mt-2 opacity-90">Preencha seus dados para se cadastrar</p>
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-base-100">
+      <BackgroundParticles />
+      <div className="glass-card w-full max-w-md md:max-w-2xl rounded-lg md:rounded-2xl relative z-10 overflow-hidden mx-2">
+        <div className="bg-gradient-to-r from-primary to-primary-focus text-white p-6 md:p-8 text-center">
+          <h1 className="text-2xl md:text-3xl font-bold">
+            {registrationSuccess ? 'Cadastro Concluído!' : 'Crie sua conta'}
+          </h1>
+          <p className="mt-1 md:mt-2 text-sm md:text-base opacity-90">
+            {registrationSuccess ? 'Verifique seu e-mail para confirmar' : 'Preencha seus dados para começar'}
+          </p>
         </div>
 
-        {/* Corpo do formulário */}
-        <div className="p-6 sm:p-8">
-          <SignupForm />
-          
-          <div className="divider my-6">OU</div>
-          
-          <div className="text-center mt-6">
-            <p className="text-sm text-base-content/70">
-              Já tem uma conta?{' '}
-              <Link href="/login" className="link link-primary font-medium">
-                Faça login
-              </Link>
-            </p>
-          </div>
+        <div className="p-4 sm:p-6 md:p-8">
+          {registrationSuccess ? (
+            <SuccessMessage 
+              show={true}
+              message="Cadastro realizado com sucesso!"
+              description="Verifique seu e-mail para confirmar sua conta."
+              redirectUrl="/login"
+              redirectText="Ir para Login"
+              autoRedirect={true} 
+            />
+          ) : (
+            <>
+              <SignupForm onSuccess={() => setRegistrationSuccess(true)} />
+              
+              <div className="divider my-6 md:my-8 text-xs md:text-sm before:bg-base-content/20 after:bg-base-content/20">
+                OU
+              </div>
+              
+              <div className="text-center text-xs md:text-sm text-base-content/70">
+                Já tem uma conta?{' '}
+                <Link href="/login" className="text-primary font-medium hover:underline">
+                  Faça login
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
   )
 }
 
-function SignupForm() {
+function SignupForm({ onSuccess }) {
   const [formData, setFormData] = useState({
     nome: '',
     sobrenome: '',
@@ -52,11 +71,10 @@ function SignupForm() {
   const [erro, setErro] = useState('')
   const [emailExists, setEmailExists] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [sucesso, setSucesso] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData(prev => ({ ...prev, [name]: value }))
     if (name === 'email' && emailExists) {
       setEmailExists(false)
       setErro('')
@@ -95,6 +113,12 @@ function SignupForm() {
       const { data, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.senha,
+        options: {
+          data: {
+            nome: formData.nome,
+            sobrenome: formData.sobrenome
+          }
+        }
       })
 
       if (signUpError) throw signUpError
@@ -111,7 +135,7 @@ function SignupForm() {
 
       if (insertError) throw insertError
 
-      setSucesso(true)
+      onSuccess()
     } catch (error) {
       setErro(error.message || 'Ocorreu um erro durante o cadastro.')
       setEmailExists(false)
@@ -120,63 +144,68 @@ function SignupForm() {
     }
   }
 
-  if (sucesso) return <SuccessMessage />
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <form onSubmit={handleSubmit} className="space-y-3 md:space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
         <FormInput 
           name="nome"
           type="text"
-          placeholder="Nome"
+          label="Nome"
           value={formData.nome}
           onChange={handleChange}
           required
+          icon="user"
         />
         <FormInput 
           name="sobrenome"
           type="text"
-          placeholder="Sobrenome"
+          label="Sobrenome"
           value={formData.sobrenome}
           onChange={handleChange}
           required
+          icon="user"
         />
       </div>
 
       <FormInput 
         name="email"
         type="email"
-        placeholder="Email"
+        label="Email"
         value={formData.email}
         onChange={handleChange}
         required
+        icon="envelope"
+        error={emailExists}
       />
 
       <FormInput 
         name="telefone"
         type="tel"
-        placeholder="Telefone"
+        label="Telefone"
         value={formData.telefone}
         onChange={handleChange}
         required
+        icon="phone"
       />
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-5">
         <FormInput 
           name="senha"
           type="password"
-          placeholder="Senha"
+          label="Senha"
           value={formData.senha}
           onChange={handleChange}
           required
+          icon="lock"
         />
         <FormInput 
           name="confirmarSenha"
           type="password"
-          placeholder="Confirmar Senha"
+          label="Confirmar Senha"
           value={formData.confirmarSenha}
           onChange={handleChange}
           required
+          icon="lock"
         />
       </div>
 
@@ -187,22 +216,27 @@ function SignupForm() {
         value={formData.data_nascimento}
         onChange={handleChange}
         required
+        icon="calendar"
       />
 
-      <ErrorMessage message={erro} isEmailExists={emailExists} />
+      <ErrorMessage message={erro} />
+
+      <SubmitButton loading={loading} className="mt-2">
+        Criar conta
+      </SubmitButton>
       
-      <SubmitButton loading={loading} className="mt-6" />
-      
-      <div className="text-xs text-base-content/60 mt-4">
+      <div className="text-xs text-base-content/60 mt-3 md:mt-4">
         Ao se cadastrar, você concorda com nossos{' '}
-        <Link href="/termos" className="link link-primary">
+        <Link href="/termos" className="text-primary font-medium hover:underline">
           Termos de Serviço
         </Link>{' '}
         e{' '}
-        <Link href="/privacidade" className="link link-primary">
+        <Link href="/privacidade" className="text-primary font-medium hover:underline">
           Política de Privacidade
         </Link>
       </div>
     </form>
   )
 }
+
+
