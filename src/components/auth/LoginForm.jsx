@@ -50,7 +50,7 @@ export default function LoginForm() {
 
       // 3. Redirecionamento
       await router.refresh()
-      const redirectPath = userData.tipo_usuario === 'admin' ? '/admin' : '/painel'
+      const redirectPath = userData.tipo_usuario === 'admin' ? '/admin' : '/perfil'
       router.push(redirectPath)
 
     } catch (error) {
