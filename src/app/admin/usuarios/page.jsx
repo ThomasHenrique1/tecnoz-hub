@@ -1,17 +1,21 @@
+// app/admin/usuarios/page.jsx
 'use client'
 
 import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabaseClient'
 import AdminRoute from '@/components/auth/AdminRoute'
+import UsersTable from '@/components/admin/UsersTable/UsersTable'
+import BackButton from '@/components/ui/BackButton'
+import { CiSearch } from "react-icons/ci";
+import { BackgroundParticles } from '@/components/ui/BackgroundParticles'
 
 export default function AdminUsuarios() {
   const [usuarios, setUsuarios] = useState([])
   const [busca, setBusca] = useState('')
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
-  const [deletingId, setDeletingId] = useState(null) // Para controlar o loading por botão
+  const [deletingId, setDeletingId] = useState(null)
 
-  // Buscar usuários
   useEffect(() => {
     const carregarUsuarios = async () => {
       try {
@@ -47,10 +51,13 @@ export default function AdminUsuarios() {
       }
     }
 
-    carregarUsuarios()
+    const debounceTimer = setTimeout(() => {
+      carregarUsuarios()
+    }, 300)
+
+    return () => clearTimeout(debounceTimer)
   }, [busca])
 
-  // Atualizar tipo de usuário
   const atualizarTipoUsuario = async (authId, novoTipo) => {
     try {
       const { error } = await supabase
@@ -69,14 +76,12 @@ export default function AdminUsuarios() {
     }
   }
 
-  // Excluir usuário
   const deletarUsuario = async (authId, nome) => {
     if (!confirm(`Tem certeza que deseja remover permanentemente ${nome}?`)) return
     
     try {
       setDeletingId(authId)
       
-      // 1. Primeiro deleta da tabela de usuários
       const { error: userError } = await supabase
         .from('usuarios')
         .delete()
@@ -84,12 +89,9 @@ export default function AdminUsuarios() {
 
       if (userError) throw userError
 
-      // 2. Depois deleta o usuário do Auth
       const { error: authError } = await supabase.auth.admin.deleteUser(authId)
-      
       if (authError) throw authError
 
-      // Atualiza a lista local
       setUsuarios(usuarios.filter(user => user.auth_id !== authId))
       
     } catch (err) {
@@ -102,93 +104,57 @@ export default function AdminUsuarios() {
 
   return (
     <AdminRoute>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Gerenciamento de Usuários</h1>
-        
-        {/* Barra de busca */}
-        <div className="mb-6">
-          <input
-            type="text"
-            placeholder="Buscar por nome ou email..."
-            value={busca}
-            onChange={(e) => setBusca(e.target.value)}
-            className="input input-bordered w-full max-w-md"
-          />
+      <BackgroundParticles />
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+        <div className="flex justify-between items-start mb-6">
+          <div>
+            <h1 className="text-2xl sm:text-3xl font-bold">Gerenciamento de Usuários</h1>
+            <p className="text-base-content/70 mt-1">
+              Administre os usuários do sistema
+            </p>
+          </div>
+          <BackButton />
         </div>
 
-        {/* Mensagens de status */}
+        {/* Barra de busca */}
+        <div className="mb-6">
+          <div className="relative max-w-md">
+            <input
+              type="text"
+              placeholder="Buscar por nome ou email..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+              className="input input-bordered w-full pl-10"
+            />
+            <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+              <CiSearch />
+            </span>
+          </div>
+        </div>
+
         {error && (
-          <div className="alert alert-error mb-6">
-            <span>{error}</span>
-            <button className="btn btn-sm" onClick={() => setError(null)}>Fechar</button>
+          <div className="alert alert-error shadow-lg mb-6">
+            <div>
+              <span>{error}</span>
+            </div>
+            <button className="btn btn-sm" onClick={() => setError(null)}>
+              Fechar
+            </button>
           </div>
         )}
 
-        {loading && (
-          <div className="flex justify-center my-8">
-            <span className="loading loading-spinner loading-lg"></span>
+        {loading ? (
+          <div className="flex justify-center items-center min-h-[300px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
           </div>
-        )}
-
-        {/* Tabela de usuários */}
-        {!loading && (
-          <div className="overflow-x-auto">
-            <table className="table w-full">
-              <thead>
-                <tr>
-                  <th>Nome</th>
-                  <th>Email</th>
-                  <th>Tipo</th>
-                  <th>Cadastrado em</th>
-                  <th>Ações</th>
-                </tr>
-              </thead>
-              <tbody>
-                {usuarios.length > 0 ? (
-                  usuarios.map((usuario) => (
-                    <tr key={usuario.auth_id}>
-                      <td>{usuario.nome}</td>
-                      <td>{usuario.email}</td>
-                      <td>
-                        <select
-                          value={usuario.tipo_usuario}
-                          onChange={(e) => 
-                            atualizarTipoUsuario(usuario.auth_id, e.target.value)
-                          }
-                          className="select select-bordered select-sm"
-                        >
-                          <option value="user">Usuário</option>
-                          <option value="admin">Administrador</option>
-                        </select>
-                      </td>
-                      <td>
-                        {new Date(usuario.created_at).toLocaleDateString()}
-                      </td>
-                      <td>
-                        <button
-                          onClick={() => deletarUsuario(usuario.auth_id, usuario.nome)}
-                          className="btn btn-error btn-sm"
-                          disabled={usuario.tipo_usuario === 'admin' || deletingId === usuario.auth_id}
-                        >
-                          {deletingId === usuario.auth_id ? (
-                            <span className="loading loading-spinner loading-xs"></span>
-                          ) : (
-                            'Remover'
-                          )}
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="5" className="text-center py-4">
-                      {busca ? 'Nenhum usuário encontrado' : 'Nenhum usuário cadastrado'}
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+        ) : (
+          <UsersTable
+            usuarios={usuarios}
+            onUpdateUserType={atualizarTipoUsuario}
+            onDeleteUser={deletarUsuario}
+            deletingId={deletingId}
+            busca={busca}
+          />
         )}
       </div>
     </AdminRoute>
