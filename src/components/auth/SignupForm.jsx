@@ -13,7 +13,7 @@ export default function SignupPage() {
   const [registrationSuccess, setRegistrationSuccess] = useState(false)
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-base-100">
+    <div className="min-h-screen flex items-center justify-center p-2 relative overflow-hidden bg-base-100">
       <BackgroundParticles />
       <div className="glass-card w-full max-w-md md:max-w-2xl rounded-lg md:rounded-2xl relative z-10 overflow-hidden mx-2">
         <div className="bg-gradient-to-r from-primary to-primary-focus text-white p-6 md:p-8 text-center">
