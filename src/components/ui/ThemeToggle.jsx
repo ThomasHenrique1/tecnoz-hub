@@ -12,7 +12,7 @@ export default function ThemeToggle() {
   }, [])
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
+    const newTheme = theme === 'light' ? 'darklight' : 'light'
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
     document.documentElement.setAttribute('data-theme', newTheme)
@@ -22,7 +22,7 @@ export default function ThemeToggle() {
     <label className="swap swap-rotate mx-2">
       <input 
         type="checkbox" 
-        checked={theme === 'dark'}
+        checked={theme === 'darklight'}
         onChange={toggleTheme}
       />
       {/* Ícone Sol (Light Mode) */}
