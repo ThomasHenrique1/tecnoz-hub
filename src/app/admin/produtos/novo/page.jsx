@@ -4,6 +4,10 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
+import AdminRoute from '@/components/auth/AdminRoute';
+import FormField from '@/components/admin/Produtos/FormField/FormField';
+import FileUpload from '@/components/admin/Produtos/FileUpload/FileUpload';
+import LoadingSpinner from '@/components/admin/Produtos/LoadingSpinner/LoadingSpinner';
 
 export default function NovoProduto() {
   const [formData, setFormData] = useState({
@@ -58,15 +62,8 @@ export default function NovoProduto() {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    if (e.target.files && e.target.files[0]) {
-      // Verificar tamanho do arquivo (máximo 5MB)
-      if (e.target.files[0].size > 5 * 1024 * 1024) {
-        alert('O tamanho máximo da imagem é 5MB');
-        return;
-      }
-      setImagemFile(e.target.files[0]);
-    }
+  const handleFileChange = (file) => {
+    setImagemFile(file);
   };
 
   const handleSubmit = async (e) => {
@@ -138,136 +135,138 @@ export default function NovoProduto() {
   // Mostrar loading enquanto verifica permissões
   if (!initialCheckComplete) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="text-center">
-          <span className="loading loading-spinner loading-lg"></span>
-          <p className="mt-4">Verificando permissões...</p>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-base-200">
+        <LoadingSpinner text="Verificando permissões de acesso..." />
       </div>
     );
   }
 
-  // Se não for admin (mesmo após verificação), não mostrar o formulário
-  if (!isAdmin) {
-    return null; // O useEffect já redirecionou
-  }
-
   return (
-    <div className="max-w-xl mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Adicionar Novo Produto</h1>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Nome do Produto*</span>
-          </label>
-          <input
-            name="nome"
-            value={formData.nome}
-            onChange={handleChange}
-            required
-            className="input input-bordered w-full"
-            maxLength={100}
-          />
-        </div>
-
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Descrição*</span>
-          </label>
-          <textarea
-            name="descricao"
-            value={formData.descricao}
-            onChange={handleChange}
-            required
-            rows={4}
-            className="textarea textarea-bordered w-full"
-            maxLength={500}
-          />
-        </div>
-
-        <div className="grid grid-cols-2 gap-4">
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Preço (R$)*</span>
-            </label>
-            <input
-              name="preco"
-              type="number"
-              step="0.01"
-              min="0"
-              value={formData.preco}
-              onChange={handleChange}
-              required
-              className="input input-bordered w-full"
-            />
-          </div>
-
-          <div className="form-control">
-            <label className="label">
-              <span className="label-text">Estoque*</span>
-            </label>
-            <input
-              name="estoque"
-              type="number"
-              min="0"
-              value={formData.estoque}
-              onChange={handleChange}
-              required
-              className="input input-bordered w-full"
-            />
-          </div>
-        </div>
-
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Categoria*</span>
-          </label>
-          <input
-            name="categoria"
-            value={formData.categoria}
-            onChange={handleChange}
-            required
-            className="input input-bordered w-full"
-            maxLength={50}
-          />
-        </div>
-
-        <div className="form-control">
-          <label className="label">
-            <span className="label-text">Imagem do Produto</span>
-            <span className="label-text-alt">(Opcional, máximo 5MB)</span>
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="file-input file-input-bordered w-full"
-          />
-          {imagemFile && (
-            <div className="mt-2">
-              <span className="text-sm">Arquivo selecionado: {imagemFile.name} ({(imagemFile.size / 1024 / 1024).toFixed(2)} MB)</span>
+    <AdminRoute>
+      <div className="min-h-screen bg-base-200 py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          {/* Header */}
+          <div className="mb-8 text-center">
+            <div className="inline-flex items-center justify-center w-14 h-14 bg-primary text-primary-content rounded-box shadow-md mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
             </div>
-          )}
-        </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">Adicionar Novo Produto</h1>
+            <p className="text-base-content/70">Preencha os detalhes do novo produto</p>
+          </div>
 
-        <div className="pt-4">
-          <button
-            type="submit"
-            disabled={loading}
-            className={`btn btn-primary w-full ${loading ? 'opacity-70' : ''}`}
-          >
-            {loading ? (
-              <span className="flex items-center justify-center gap-2">
-                <span className="loading loading-spinner loading-sm"></span>
-                Salvando...
-              </span>
-            ) : (
-              'Cadastrar Produto'
-            )}
-          </button>
+          {/* Form Card */}
+          <div className="card bg-base-100 border border-base-300 rounded-box shadow-lg overflow-hidden">
+            <div className="p-1 bg-primary"></div>
+            
+            <form onSubmit={handleSubmit} className="p-6 sm:p-8">
+              <div className="space-y-5">
+                <FormField
+                  label="Nome do Produto"
+                  name="nome"
+                  type="text"
+                  value={formData.nome}
+                  onChange={handleChange}
+                  required
+                  placeholder="Digite o nome do produto"
+                  maxLength={100}
+                />
+
+                <FormField
+                  label="Descrição"
+                  name="descricao"
+                  type="textarea"
+                  value={formData.descricao}
+                  onChange={handleChange}
+                  required
+                  placeholder="Descreva o produto em detalhes..."
+                  rows={4}
+                  maxLength={500}
+                />
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <FormField
+                    label="Preço (R$)"
+                    name="preco"
+                    type="number"
+                    value={formData.preco}
+                    onChange={handleChange}
+                    required
+                    step="0.01"
+                    min="0"
+                    placeholder="0,00"
+                  />
+
+                  <FormField
+                    label="Estoque"
+                    name="estoque"
+                    type="number"
+                    value={formData.estoque}
+                    onChange={handleChange}
+                    required
+                    min="0"
+                    placeholder="0"
+                  />
+                </div>
+
+                <FormField
+                  label="Categoria"
+                  name="categoria"
+                  type="text"
+                  value={formData.categoria}
+                  onChange={handleChange}
+                  required
+                  placeholder="Ex: Eletrônicos, Roupas, etc."
+                  maxLength={50}
+                />
+
+                <FileUpload
+                  onFileChange={handleFileChange}
+                  maxSize={5}
+                  acceptedTypes="image/*"
+                  label="Imagem do Produto"
+                  helperText="Opcional, máximo 5MB"
+                />
+              </div>
+
+              {/* Botões de ação */}
+              <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-base-300">
+                <button
+                  type="button"
+                  onClick={() => router.push('/admin/produtos')}
+                  disabled={loading}
+                  className="btn btn-outline rounded-btn px-6 py-3 min-w-[120px] transition-all duration-200 hover:shadow-md"
+                  style={{ borderRadius: 'var(--radius-field, 1rem)' }}
+                >
+                  Cancelar
+                </button>
+                
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="btn btn-primary rounded-btn px-6 py-3 min-w-[160px] transition-all duration-200 hover:shadow-md flex items-center justify-center gap-2"
+                  style={{ borderRadius: 'var(--radius-field, 1rem)' }}
+                >
+                  {loading ? (
+                    <>
+                      <span className="loading loading-spinner loading-sm"></span>
+                      Cadastrando...
+                    </>
+                  ) : (
+                    <>
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      </svg>
+                      Cadastrar Produto
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-      </form>
-    </div>
+      </div>
+    </AdminRoute>
   );
 }
