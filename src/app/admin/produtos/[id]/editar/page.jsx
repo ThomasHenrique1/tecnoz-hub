@@ -4,6 +4,8 @@ import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
 import { supabase } from "@/lib/supabaseClient"
 import AdminRoute from "@/components/auth/AdminRoute"
+import FormField from "@/components/admin/Produtos/FormField/FormField"
+import LoadingSpinner from "@/components/admin/Produtos/LoadingSpinner/LoadingSpinner"
 
 export default function EditarProdutoPage() {
   const router = useRouter()
@@ -84,83 +86,147 @@ export default function EditarProdutoPage() {
     }
   }
 
-  if (loading) return <p className="p-4">Carregando dados do produto...</p>
+  if (loading) return (
+    <div className="flex justify-center items-center min-h-64">
+      <LoadingSpinner text="Carregando dados do produto..." />
+    </div>
+  )
 
   return (
     <AdminRoute>
-    <div className="p-6 max-w-md mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Editar Produto</h1>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block mb-1 font-semibold">Nome</label>
-          <input
-            type="text"
-            name="nome"
-            value={form.nome}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          />
+  <div className="min-h-screen bg-base-200 py-8 px-4">
+    <div className="max-w-2xl mx-auto">
+      {/* Header aprimorado */}
+      <div className="mb-8 text-center">
+        <div className="inline-flex items-center justify-center w-14 h-14 bg-primary text-primary-content rounded-box shadow-md mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+          </svg>
         </div>
+        <h1 className="text-2xl sm:text-3xl font-bold text-base-content mb-2">Editar Produto</h1>
+        <p className="text-base-content/70">Atualizando produto <span className="font-semibold text-primary">#{id}</span></p>
+      </div>
 
-        <div>
-          <label className="block mb-1 font-semibold">Descrição</label>
-          <textarea
-            name="descricao"
-            value={form.descricao}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            rows={3}
-          />
-        </div>
+      {/* Card do formulário com melhorias visuais */}
+      <div className="card bg-base-100 border border-base-300 rounded-box shadow-lg overflow-hidden">
+        <div className="p-1 bg-primary"></div>
+        
+        <form onSubmit={handleSubmit} className="p-6 sm:p-8">
+          <div className="space-y-5">
+            <FormField
+              label="Nome"
+              name="nome"
+              type="text"
+              value={form.nome}
+              onChange={handleChange}
+              required
+              placeholder="Nome do produto"
+            />
 
-        <div>
-          <label className="block mb-1 font-semibold">Preço (R$)</label>
-          <input
-            type="number"
-            step="0.01"
-            name="preco"
-            value={form.preco}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            required
-          />
-        </div>
+            <FormField
+              label="Descrição"
+              name="descricao"
+              type="textarea"
+              value={form.descricao}
+              onChange={handleChange}
+              placeholder="Descrição detalhada do produto"
+              rows={4}
+            />
 
-        <div>
-          <label className="block mb-1 font-semibold">Estoque</label>
-          <input
-            type="number"
-            name="estoque"
-            value={form.estoque}
-            onChange={handleChange}
-            className="w-full border border-gray-300 rounded px-3 py-2"
-            min={0}
-          />
-        </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <FormField
+                label="Preço (R$)"
+                name="preco"
+                type="number"
+                value={form.preco}
+                onChange={handleChange}
+                required
+                step="0.01"
+                min="0"
+                placeholder="0,00"
+              />
 
-        <div>
-          <label className="block mb-1 font-semibold">URL da Imagem</label>
-          <input
-            type="text"
-            name="imagem_url"
-            value={form.imagem_url}
-            onChange={handleChange}
-            placeholder="https://..."
-            className="w-full border border-gray-300 rounded px-3 py-2"
-          />
-        </div>
+              <FormField
+                label="Estoque"
+                name="estoque"
+                type="number"
+                value={form.estoque}
+                onChange={handleChange}
+                min="0"
+                placeholder="0"
+              />
+            </div>
 
-        <button
-          type="submit"
-          disabled={saving}
-          className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        >
-          {saving ? "Salvando..." : "Atualizar Produto"}
-        </button>
-      </form>
+            <FormField
+              label="URL da Imagem"
+              name="imagem_url"
+              type="url"
+              value={form.imagem_url}
+              onChange={handleChange}
+              placeholder="https://exemplo.com/imagem.jpg"
+              icon="photograph"
+            />
+
+            {form.imagem_url && (
+              <div className="mt-2">
+                <label className="block text-sm font-medium text-gray-700 mb-3">Preview da Imagem</label>
+                <div className="relative w-80 h-60 border-2 border-dashed border-gray-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                  <img 
+                    src={form.imagem_url} 
+                    alt="Preview" 
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      e.target.style.display = 'none'
+                      e.target.nextElementSibling.style.display = 'flex'
+                    }}
+                  />
+                  <div className="absolute inset-0 hidden items-center justify-center bg-gray-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Botões de ação com estilo aprimorado */}
+          <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-base-300">
+            <button
+              type="button"
+              onClick={() => router.push('/admin/produtos')}
+              disabled={saving}
+              className="btn btn-outline rounded-btn px-6 py-3 min-w-[120px] transition-all duration-200 hover:shadow-md"
+              style={{ borderRadius: 'var(--radius-field, 1rem)' }}
+            >
+              Cancelar
+            </button>
+            
+            <button
+              type="submit"
+              disabled={saving}
+              className="btn btn-primary rounded-btn px-6 py-3 min-w-[160px] transition-all duration-200 hover:shadow-md flex items-center justify-center gap-2"
+              style={{ borderRadius: 'var(--radius-field, 1rem)' }}
+            >
+              {saving ? (
+                <>
+                  <span className="loading loading-spinner loading-sm"></span>
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                  Atualizar Produto
+                </>
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
-    </AdminRoute>
+  </div>
+</AdminRoute>
   )
 }
