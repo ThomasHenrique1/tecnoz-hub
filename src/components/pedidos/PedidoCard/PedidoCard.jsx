@@ -3,6 +3,7 @@
 import { motion } from "framer-motion"
 import PedidoItem from "@/components/pedidos/PedidoItem/PedidoItem"
 import { formatDate } from "@/lib/utils"
+import { BackgroundParticles } from "@/components/ui/BackgroundParticles"
 
 export default function PedidoCard({ pedido }) {
   return (
@@ -10,33 +11,42 @@ export default function PedidoCard({ pedido }) {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="card bg-white shadow-sm hover:shadow-md transition-all duration-300 mb-6 border border-gray-100 rounded-lg overflow-hidden"
+      className="card bg-base-100 shadow-sm hover:shadow-md transition-all duration-300 mb-6 border border-base-300 rounded-box overflow-hidden"
+      style={{ borderRadius: 'var(--radius-box, 1rem)' }}
     >
-      <div className="card-body p-5 sm:p-6">
+      <div className="card-body p-4 sm:p-5 md:p-6">
+        <BackgroundParticles />
+        {/* Cabeçalho */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-          <div className="flex items-center flex-wrap gap-2">
-            <h2 className="text-xl font-semibold text-gray-800">
+          <div className="flex flex-col xs:flex-row items-start xs:items-center gap-2 xs:gap-3">
+            <h2 className="text-xl md:text-2xl font-bold text-base-content">
               Pedido #{pedido.id}
             </h2>
-            <span className={`badge ${getStatusBadgeClass(pedido.status)} text-sm font-medium px-3 py-1`}>
+            <span className={`badge badge-lg ${getStatusBadgeClass(pedido.status)}`}>
               {pedido.status}
             </span>
           </div>
-          <p className="text-sm text-gray-500 font-medium">
+          <p className=" text-sm md:text-base text-base-content/70 mt-1 sm:mt-0 text-right w-full sm:w-auto font-bold">
             {formatDate(pedido.criado_em)}
           </p>
         </div>
 
-        <ul className="divide-y divide-gray-100 my-4">
+        {/* Lista de itens */}
+        <ul className="space-y-4 my-4">
           {pedido.itens.map((item, idx) => (
             <PedidoItem key={idx} item={item} />
           ))}
         </ul>
 
-        <div className="flex justify-end mt-6 pt-4 border-t border-gray-100">
-          <div className="text-right">
-            <p className="text-sm text-gray-500 mb-1">Total do Pedido</p>
-            <p className="text-2xl font-bold text-primary">
+        {/* Rodapé com total */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-6 pt-5 border-t border-base-300">
+          <div className="text-base-content/70 text-sm md:text-base">
+            <span className="block sm:inline-block">Pedido realizado em  </span>
+            <span className="font-medium"> {formatDate(pedido.criado_em, true)}</span>
+          </div>
+          <div className="text-right ml-auto">
+            <p className="text-sm md:text-base text-base-content/70 mb-1">Total do Pedido</p>
+            <p className="text-2xl md:text-3xl font-bold text-primary">
               R$ {pedido.total.toFixed(2).replace('.', ',')}
             </p>
           </div>
@@ -47,17 +57,19 @@ export default function PedidoCard({ pedido }) {
 }
 
 function getStatusBadgeClass(status) {
-  const baseClass = "badge rounded-full"
+  const baseClass = "rounded-btn capitalize"
   switch (status.toLowerCase()) {
     case "pendente":
-      return `${baseClass} bg-amber-100 text-amber-800`
+      return `${baseClass} badge-warning`
     case "entregue":
-      return `${baseClass} bg-green-100 text-green-800`
+      return `${baseClass} badge-success`
     case "cancelado":
-      return `${baseClass} bg-red-100 text-red-800`
+      return `${baseClass} badge-error`
     case "processando":
-      return `${baseClass} bg-blue-100 text-blue-800`
+      return `${baseClass} badge-info`
+    case "enviado":
+      return `${baseClass} badge-primary`
     default:
-      return `${baseClass} bg-gray-100 text-gray-800`
+      return `${baseClass} badge-neutral`
   }
 }
