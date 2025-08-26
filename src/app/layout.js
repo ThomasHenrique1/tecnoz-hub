@@ -1,6 +1,6 @@
 import { CarrinhoProvider } from "@/context/CarrinhoContext"
 import Navbar from "@/components/Navbar/Navbar"
-import './globals.css' // Importe seu arquivo CSS global
+import './globals.css' 
 
 export default function RootLayout({ children }) {
   return (
@@ -8,9 +8,7 @@ export default function RootLayout({ children }) {
       <meta charSet="UTF-8" />
       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       <title>TecnozHub</title>
-      {/* Adicione outros metadados conforme necessário */}
       <head>
-        {/* Metadados opcionais */}
       </head>
       <body className="min-h-screen bg-base-100"> {/* Adicione classes Tailwind */}
         <CarrinhoProvider>
