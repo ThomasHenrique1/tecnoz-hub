@@ -113,7 +113,6 @@ export default function HomePage() {
                    <PromoBanner
                     title="Ofertas de Verão"
                     subtitle="Até 40% OFF em produtos selecionados"
-                    image="/banners/summer-sale.jpg"
                     cta="Ver Ofertas"
                     link="/ofertas"
                     badge="Queima Estoque"
@@ -169,33 +168,34 @@ export default function HomePage() {
       <TestimonialsSection />
 
       {/* Newsletter Section */}
-      <section className="py-16 bg-primary text-primary-content">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="max-w-2xl mx-auto">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Fique por Dentro das Novidades
-            </h2>
-            <p className="text-primary-content/80 text-lg mb-8">
-              Cadastre-se para receber ofertas exclusivas e novidades em primeira mão
-            </p>
-            
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <input 
-                type="email" 
-                placeholder="Seu melhor email" 
-                className="input input-bordered flex-1 text-base-content"
-              />
-              <button className="btn btn-secondary">
-                Inscrever-se
-              </button>
-            </div>
-            
-            <p className="text-sm text-primary-content/60 mt-4">
-              Respeitamos sua privacidade. Você pode cancelar a qualquer momento.
-            </p>
-          </div>
-        </div>
-      </section>
+      <section className="py-20  text-primary-content">
+  <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <div className="max-w-2xl mx-auto">
+      <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+        Fique por Dentro das Novidades
+      </h2>
+      <p className="text-primary-content/80 text-lg md:text-xl mb-10">
+        Cadastre-se para receber ofertas exclusivas e novidades em primeira mão
+      </p>
+
+      <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+        <input 
+          type="email" 
+          placeholder="Seu melhor email" 
+          className="input input-bordered flex-1 text-base-content rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/60"
+        />
+        <button className="btn btn-secondary px-6 rounded-xl shadow-md hover:shadow-lg transition duration-200">
+          Inscrever-se
+        </button>
+      </div>
+
+      <p className="text-sm text-primary-content/70 mt-5 italic">
+        Respeitamos sua privacidade. Você pode cancelar a qualquer momento.
+      </p>
+    </div>
+  </div>
+</section>
+
     </div>
   )
 }
