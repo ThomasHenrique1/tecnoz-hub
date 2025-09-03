@@ -8,7 +8,6 @@ export default function NavLinks({ mobile = false }) {
   
   const links = [
     { href: "/produtos", label: "Produtos" },
-    { href: "/pedidos", label: "Pedidos" },
     { href: "/sobre", label: "Sobre" }
   ]
 
