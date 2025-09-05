@@ -64,8 +64,6 @@ export default function Footer() {
                 { href: "/sobre", label: "Sobre Nós", icon: HiUserGroup },
                 { href: "/contato", label: "Fale Conosco", icon: FaWhatsapp },
                 { href: "/faq", label: "Perguntas Frequentes", icon: HiQuestionMarkCircle },
-                { href: "/garantia", label: "Política de Garantia" },
-                { href: "/trocas", label: "Trocas e Devoluções" }
               ].map((item) => (
                 <li key={item.href}>
                   <a 
@@ -198,12 +196,6 @@ export default function Footer() {
                 className="text-base-content/60 hover:text-primary transition-colors"
               >
                 Política de Privacidade
-              </a>
-              <a 
-                href="/cookies" 
-                className="text-base-content/60 hover:text-primary transition-colors"
-              >
-                Política de Cookies
               </a>
             </div>
           </div>
