@@ -7,7 +7,7 @@ import { useState } from "react"
 export default function PromoBanner({ 
   title = "Ofertas Especiais", 
   subtitle = "Aproveite nossas promoções exclusivas", 
-  image = null, // Agora é opcional
+  image = null, 
   cta = "Ver Ofertas", 
   link = "/produtos",
   badge,
@@ -15,7 +15,7 @@ export default function PromoBanner({
   discount 
 }) {
   const [imageError, setImageError] = useState(false)
-  const [imageLoading, setImageLoading] = useState(!!image) // Só loading se tiver imagem
+  const [imageLoading, setImageLoading] = useState(!!image)
 
   // Placeholder gradiente baseado nas cores do tema
   const gradientBg = "bg-gradient-to-r from-primary to-secondary"
@@ -46,19 +46,18 @@ export default function PromoBanner({
       {/* Fundo gradiente quando não há imagem ou ocorre erro */}
       {(!image || imageError) && (
         <div className={`absolute inset-0 ${gradientBg}`}>
-          {/* Padrão decorativo */}
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.1)_1px,transparent_0)] bg-[length:20px_20px]"></div>
         </div>
       )}
       
-      {/* Overlay gradiente (mais suave quando tem imagem) */}
+      {/* Overlay gradiente */}
       <div className={`absolute inset-0 ${
         image && !imageError 
           ? 'bg-gradient-to-r from-black/60 via-black/40 to-black/20' 
           : 'bg-black/30'
       } group-hover:bg-black/40 transition-all duration-500`}></div>
       
-      {/* Elementos decorativos */}
+     
       <div className="absolute top-6 left-6 w-24 h-24 bg-primary/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute bottom-6 right-6 w-32 h-32 bg-secondary/20 rounded-full blur-xl animate-pulse"></div>
 
