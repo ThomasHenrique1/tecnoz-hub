@@ -90,29 +90,32 @@ export default function PerfilPage() {
 
       const fileExt = selectedFile.name.split('.').pop()
       const fileName = `${user.id}.${fileExt}`
-      
+      const filePath = `avatars/${fileName}`  
+            
       // Upload da imagem
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(fileName, selectedFile, { upsert: true })
+        .upload(filePath, selectedFile, { upsert: true })
       
       if (uploadError) throw uploadError
 
       // Obtém URL pública
-      const { data: { publicUrl } } = supabase.storage
+      const { data: { publicUrl } } = await supabase.storage
         .from('avatars')
-        .getPublicUrl(fileName)
+        .getPublicUrl(filePath)
+
+      const updatedUrl = `${publicUrl}?t=${Date.now()}` // Força atualização do cache
 
       // Atualiza perfil com a nova URL
       const { error: updateError } = await supabase
         .from('usuarios')
-        .update({ foto_perfil: publicUrl })
+        .update({ foto_perfil: updatedUrl })
         .eq('auth_id', user.id)
 
       if (updateError) throw updateError
 
       alert('Imagem enviada com sucesso!')
-      setUsuario(prev => prev ? { ...prev, foto_perfil: publicUrl } : null)
+     setUsuario(prev => prev ? { ...prev, foto_perfil: updatedUrl } : null)
       setSelectedFile(null)
     } catch (error) {
       console.error('Erro no upload:', error)
