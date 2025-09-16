@@ -6,6 +6,8 @@ import { formatDate } from "@/lib/utils"
 import { BackgroundParticles } from "@/components/ui/BackgroundParticles"
 
 export default function PedidoCard({ pedido }) {
+  const status = getUpdatedStatus(pedido.status, pedido.criado_em)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -22,8 +24,8 @@ export default function PedidoCard({ pedido }) {
             <h2 className="text-xl md:text-2xl font-bold text-base-content">
               Pedido #{pedido.id}
             </h2>
-            <span className={`badge badge-lg ${getStatusBadgeClass(pedido.status)}`}>
-              {pedido.status}
+            <span className={`badge badge-lg ${getStatusBadgeClass(status)}`}>
+              {status}
             </span>
           </div>
           <p className=" text-sm md:text-base text-base-content/70 mt-1 sm:mt-0 text-right w-full sm:w-auto font-bold">
@@ -54,6 +56,20 @@ export default function PedidoCard({ pedido }) {
       </div>
     </motion.div>
   )
+}
+
+// Atualiza status se passaram 2 dias sem pagamento
+function getUpdatedStatus(status, criadoEm) {
+  if (status.toLowerCase() !== "pendente") return status
+
+  const criado = new Date(criadoEm)
+  const agora = new Date()
+  const diffMs = agora - criado
+  const diffDias = diffMs / (1000 * 60 * 60 * 24)
+
+  if (diffDias >= 2) return "cancelado"
+
+  return status
 }
 
 function getStatusBadgeClass(status) {
