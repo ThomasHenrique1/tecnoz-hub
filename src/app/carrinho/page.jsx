@@ -11,12 +11,39 @@ import CarrinhoItem from "@/components/carrinho/CarrinhoItem/CarrinhoItem"
 import CarrinhoTotal from "@/components/carrinho/CarrinhoTotal/CarrinhoTotal"
 import ConfirmationModal from "@/components/carrinho/ConfirmationModal/ConfirmationModal"
 
+// Componente de Notificação
+function Notification({ message, type, onClose }) {
+  if (!message) return null
+
+  return (
+    <div className="fixed top-4 right-4 z-50">
+      <div
+        className={`alert ${
+          type === "success" ? "alert-success" : "alert-error"
+        } shadow-lg`}
+      >
+        <span>{message}</span>
+        <button onClick={onClose} className="btn btn-sm btn-ghost">
+          ✕
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function CarrinhoPage() {
   const [itens, setItens] = useState([])
   const [loading, setLoading] = useState(true)
   const [finalizando, setFinalizando] = useState(false)
   const [itemToRemove, setItemToRemove] = useState(null)
+  const [notification, setNotification] = useState({ message: "", type: "" })
   const router = useRouter()
+
+  // Função para exibir notificações
+  const showNotification = (message, type = "success") => {
+    setNotification({ message, type })
+    setTimeout(() => setNotification({ message: "", type: "" }), 4000)
+  }
 
   useEffect(() => {
     const fetchCarrinho = async () => {
@@ -47,6 +74,7 @@ export default function CarrinhoPage() {
 
       if (error) {
         console.error("Erro ao buscar carrinho:", error)
+        showNotification("Erro ao carregar o carrinho.", "error")
       } else {
         setItens(data || [])
       }
@@ -57,24 +85,17 @@ export default function CarrinhoPage() {
     fetchCarrinho()
   }, [router])
 
-  const handleRemover = async (id) => {
-    setItemToRemove(id)
-  }
-
   const confirmRemove = async () => {
     if (!itemToRemove) return
 
     const { error } = await supabase.from("carrinho").delete().eq("id", itemToRemove)
     if (error) {
       console.error("Erro ao remover:", error)
-      alert("Erro ao remover item.")
+      showNotification("Erro ao remover item.", "error")
     } else {
       setItens((prev) => prev.filter((item) => item.id !== itemToRemove))
+      showNotification("Item removido do carrinho.", "success")
     }
-    setItemToRemove(null)
-  }
-
-  const cancelRemove = () => {
     setItemToRemove(null)
   }
 
@@ -83,7 +104,7 @@ export default function CarrinhoPage() {
 
     const itemAtual = itens.find((item) => item.id === id)
     if (itemAtual && novaQtd > itemAtual.produto.estoque) {
-      alert("Quantidade solicitada maior que o estoque disponível.")
+      showNotification("Quantidade maior que o estoque disponível.", "error")
       return
     }
 
@@ -94,7 +115,7 @@ export default function CarrinhoPage() {
 
     if (error) {
       console.error("Erro ao atualizar quantidade:", error)
-      alert("Erro ao atualizar quantidade.")
+      showNotification("Erro ao atualizar quantidade.", "error")
       return
     }
 
@@ -103,6 +124,7 @@ export default function CarrinhoPage() {
         item.id === id ? { ...item, quantidade: novaQtd } : item
       )
     )
+    showNotification("Quantidade atualizada.", "success")
   }
 
   const handleFinalizarCompra = async () => {
@@ -114,19 +136,19 @@ export default function CarrinhoPage() {
       } = await supabase.auth.getUser()
 
       if (!user) {
-        alert("Você precisa estar logado para finalizar a compra.")
+        showNotification("Você precisa estar logado para finalizar a compra.", "error")
         router.push("/login")
         return
       }
 
       if (itens.length === 0) {
-        alert("Carrinho vazio.")
+        showNotification("Carrinho vazio.", "error")
         return
       }
 
       for (const item of itens) {
         if (item.quantidade > item.produto.estoque) {
-          alert(`Estoque insuficiente para o produto ${item.produto.nome}.`)
+          showNotification(`Estoque insuficiente para ${item.produto.nome}.`, "error")
           setFinalizando(false)
           return
         }
@@ -166,18 +188,17 @@ export default function CarrinhoPage() {
 
       await supabase.from("carrinho").delete().eq("usuario_id", user.id)
       setItens([])
-      alert("Pedido finalizado com sucesso!")
+      showNotification("Pedido finalizado com sucesso!", "success")
       router.push("/pedidos")
     } catch (error) {
       console.error("Erro ao finalizar compra:", error)
-      alert("Erro inesperado ao finalizar compra.")
+      showNotification("Erro inesperado ao finalizar compra.", "error")
     } finally {
       setFinalizando(false)
     }
   }
 
   if (loading) return <LoadingSpinner />
-
   if (itens.length === 0) return <EmptyCart />
 
   const total = itens.reduce(
@@ -187,8 +208,15 @@ export default function CarrinhoPage() {
 
   return (
     <main className="container mx-auto px-4 py-8">
+      {/* Notificação */}
+      <Notification
+        message={notification.message}
+        type={notification.type}
+        onClose={() => setNotification({ message: "", type: "" })}
+      />
+
       <CarrinhoHeader />
-      
+
       <ul className="space-y-4">
         <AnimatePresence>
           {itens.map((item) => (
@@ -201,7 +229,7 @@ export default function CarrinhoPage() {
             >
               <CarrinhoItem
                 item={item}
-                onRemove={handleRemover}
+                onRemove={setItemToRemove}
                 onUpdateQuantity={handleAtualizarQuantidade}
                 disabled={finalizando}
               />
@@ -219,7 +247,7 @@ export default function CarrinhoPage() {
       <ConfirmationModal
         isOpen={!!itemToRemove}
         onConfirm={confirmRemove}
-        onCancel={cancelRemove}
+        onCancel={() => setItemToRemove(null)}
         message="Deseja remover este item do carrinho?"
       />
     </main>
