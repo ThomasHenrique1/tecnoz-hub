@@ -4,7 +4,7 @@ import { useState } from "react"
 import { supabase } from "@/lib/supabaseClient"
 import { useCarrinho } from "@/context/CarrinhoContext"
 import { useRouter } from "next/navigation"
-import CartSuccessModal from "@/components/CartSuccessModal/CartSuccessModal"
+import CartSuccessModal from "@/components/Modal/CartSuccessModal"
 
 export default function AddToCartButton({ produtoId, className = "", disabled = false }) {
   const [loading, setLoading] = useState(false)
