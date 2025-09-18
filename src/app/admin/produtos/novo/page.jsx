@@ -19,7 +19,13 @@ export default function NovoProduto() {
     'Processador',
     'Fonte',
     'SSD',
-    'HD'
+    'HD',
+    'Placa-de-Video',
+    'Gabinete',
+    'Monitor',
+    'Teclado',
+    'Mouse',
+    'Headset',
   ];
 
   const [formData, setFormData] = useState({
