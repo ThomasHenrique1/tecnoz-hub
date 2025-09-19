@@ -41,14 +41,14 @@ export default function NovoProduto() {
           .single();
 
         if (error || !usuarioData || usuarioData.tipo_usuario !== 'admin') {
-          router.push('/');
+          router.push('/painel');
           return;
         }
 
         setIsAdmin(true);
       } catch (error) {
         console.error('Erro ao verificar admin:', error);
-        router.push('/');
+        router.push('/painel');
       } finally {
         setInitialCheckComplete(true);
       }
@@ -217,7 +217,7 @@ export default function NovoProduto() {
                   value={formData.categoria}
                   onChange={handleChange}
                   required
-                  placeholder="Ex: Componentes, Periféricos, Acessórios..."
+                  placeholder="Ex: Eletrônicos, Roupas, etc."
                   maxLength={50}
                 />
 
