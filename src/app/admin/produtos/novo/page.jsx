@@ -10,24 +10,6 @@ import FileUpload from '@/components/admin/Produtos/FileUpload/FileUpload';
 import LoadingSpinner from '@/components/admin/Produtos/LoadingSpinner/LoadingSpinner';
 
 export default function NovoProduto() {
-  // Categorias pré-definidas
-  const categoriasPredefinidas = [
-    'Placa-Mae',
-    'Memoria-Ram',
-    'Water-Cooler',
-    'Air-Cooler',
-    'Processador',
-    'Fonte',
-    'SSD',
-    'HD',
-    'Placa-de-Video',
-    'Gabinete',
-    'Monitor',
-    'Teclado',
-    'Mouse',
-    'Headset',
-  ];
-
   const [formData, setFormData] = useState({
     nome: '',
     descricao: '',
@@ -39,9 +21,6 @@ export default function NovoProduto() {
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [initialCheckComplete, setInitialCheckComplete] = useState(false);
-  const [categorias, setCategorias] = useState(categoriasPredefinidas);
-  const [novaCategoria, setNovaCategoria] = useState('');
-  const [mostrarInputNovaCategoria, setMostrarInputNovaCategoria] = useState(false);
   const router = useRouter();
 
   // Verificar se o usuário é admin ao carregar o componente
@@ -80,34 +59,7 @@ export default function NovoProduto() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    if (name === 'categoria' && value === 'outra') {
-      // Usuario quer adicionar nova categoria
-      setMostrarInputNovaCategoria(true);
-      setFormData((prev) => ({ ...prev, [name]: '' }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
-
-  const handleNovaCategoriaChange = (e) => {
-    setNovaCategoria(e.target.value);
-  };
-
-  const adicionarNovaCategoria = () => {
-    if (novaCategoria.trim() && !categorias.includes(novaCategoria.trim())) {
-      const categoriaFormatada = novaCategoria.trim();
-      setCategorias([...categorias, categoriaFormatada]);
-      setFormData((prev) => ({ ...prev, categoria: categoriaFormatada }));
-      setNovaCategoria('');
-      setMostrarInputNovaCategoria(false);
-    }
-  };
-
-  const cancelarNovaCategoria = () => {
-    setNovaCategoria('');
-    setMostrarInputNovaCategoria(false);
-    setFormData((prev) => ({ ...prev, categoria: '' }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (file) => {
@@ -258,59 +210,16 @@ export default function NovoProduto() {
                   />
                 </div>
 
-                {/* Campo de Categoria Melhorado */}
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">
-                      Categoria <span className="text-error">*</span>
-                    </span>
-                  </label>
-                  
-                  {!mostrarInputNovaCategoria ? (
-                    <select
-                      name="categoria"
-                      value={formData.categoria}
-                      onChange={handleChange}
-                      required
-                      className="select select-bordered w-full rounded-field"
-                      style={{ borderRadius: 'var(--radius-field, 1rem)' }}
-                    >
-                      <option value="">Selecione uma categoria</option>
-                      {categorias.map((cat) => (
-                        <option key={cat} value={cat}>
-                          {cat}
-                        </option>
-                      ))}
-                      <option value="outra">+ Adicionar nova categoria</option>
-                    </select>
-                  ) : (
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        value={novaCategoria}
-                        onChange={handleNovaCategoriaChange}
-                        placeholder="Digite a nova categoria"
-                        className="input input-bordered w-full rounded-field"
-                        style={{ borderRadius: 'var(--radius-field, 1rem)' }}
-                      />
-                      <button
-                        type="button"
-                        onClick={adicionarNovaCategoria}
-                        className="btn btn-success rounded-field"
-                        disabled={!novaCategoria.trim()}
-                      >
-                        ✓
-                      </button>
-                      <button
-                        type="button"
-                        onClick={cancelarNovaCategoria}
-                        className="btn btn-error rounded-field"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )}
-                </div>
+                <FormField
+                  label="Categoria"
+                  name="categoria"
+                  type="text"
+                  value={formData.categoria}
+                  onChange={handleChange}
+                  required
+                  placeholder="Ex: Componentes, Periféricos, Acessórios..."
+                  maxLength={50}
+                />
 
                 <FileUpload
                   onFileChange={handleFileChange}
