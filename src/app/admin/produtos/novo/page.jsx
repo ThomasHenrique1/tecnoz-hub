@@ -17,6 +17,7 @@ export default function NovoProduto() {
     estoque: '',
     categoria: '',
   });
+  const [categorias, setCategorias] = useState([]);
   const [imagemFile, setImagemFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -57,9 +58,29 @@ export default function NovoProduto() {
     checkAdminStatus();
   }, [router]);
 
+  // Buscar categorias do Supabase
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const { data, error } = await supabase
+          .from("categorias")
+          .select("*")
+          .order("nome", { ascending: true });
+
+        if (error) throw error;
+        setCategorias(data);
+      } catch (err) {
+        console.error("Erro ao carregar categorias:", err.message);
+      }
+    };
+
+    fetchCategorias();
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    // normaliza para evitar bugs com acentos
+    setFormData((prev) => ({ ...prev, [name]: value.normalize("NFC") }));
   };
 
   const handleFileChange = (file) => {
@@ -71,20 +92,16 @@ export default function NovoProduto() {
     setLoading(true);
 
     try {
-      // Verificação adicional de segurança
       if (!isAdmin) {
         throw new Error('Apenas administradores podem adicionar produtos');
       }
 
       let imagem_url = null;
 
-      // 1. Upload da imagem
       if (imagemFile) {
         const fileExt = imagemFile.name.split('.').pop();
         const fileName = `${uuidv4()}.${fileExt}`;
         const filePath = `produtos/${fileName}`;
-
-        const { data: { user } } = await supabase.auth.getUser();
 
         const { error: uploadError } = await supabase.storage
           .from('produtos')
@@ -98,29 +115,24 @@ export default function NovoProduto() {
           throw new Error(`Erro no upload da imagem: ${uploadError.message}`);
         }
 
-        // 2. Obter URL pública
         const { data: { publicUrl } } = supabase.storage
           .from('produtos')
           .getPublicUrl(filePath);
         
         imagem_url = publicUrl;
       }
-
-      // 3. Obter ID do usuário atual
-      const { data: { user } } = await supabase.auth.getUser();
-
-      // 4. Inserir produto no banco
-      const { error } = await supabase.from('produtos').insert([{
-        ...formData,
-        preco: parseFloat(formData.preco),
-        estoque: parseInt(formData.estoque),
-        imagem_url,
-        criado_em: new Date().toISOString(),
-      }]);
+        const { error } = await supabase.from('produtos').insert([{
+          nome: String(formData.nome).normalize("NFC"),
+          descricao: String(formData.descricao).normalize("NFC"),
+          preco: parseFloat(formData.preco),
+          estoque: parseInt(formData.estoque),
+          categoria: formData.categoria,
+          imagem_url,
+          criado_em: new Date().toISOString(),
+        }]);
 
       if (error) throw error;
 
-      // Redirecionar e forçar atualização da lista
       router.push('/admin/produtos');
       router.refresh();
 
@@ -132,7 +144,6 @@ export default function NovoProduto() {
     }
   };
 
-  // Mostrar loading enquanto verifica permissões
   if (!initialCheckComplete) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base-200">
@@ -145,7 +156,6 @@ export default function NovoProduto() {
     <AdminRoute>
       <div className="min-h-screen bg-base-200 py-8 px-4">
         <div className="max-w-2xl mx-auto">
-          {/* Header */}
           <div className="mb-8 text-center">
             <div className="inline-flex items-center justify-center w-14 h-14 bg-primary text-primary-content rounded-box shadow-md mb-4">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -156,7 +166,6 @@ export default function NovoProduto() {
             <p className="text-base-content/70">Preencha os detalhes do novo produto</p>
           </div>
 
-          {/* Form Card */}
           <div className="card bg-base-100 border border-base-300 rounded-box shadow-lg overflow-hidden">
             <div className="p-1 bg-primary"></div>
             
@@ -170,7 +179,7 @@ export default function NovoProduto() {
                   onChange={handleChange}
                   required
                   placeholder="Digite o nome do produto"
-                  maxLength={100}
+                  maxLength={500}
                 />
 
                 <FormField
@@ -182,7 +191,7 @@ export default function NovoProduto() {
                   required
                   placeholder="Descreva o produto em detalhes..."
                   rows={4}
-                  maxLength={500}
+                  maxLength={1000}
                 />
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -210,27 +219,36 @@ export default function NovoProduto() {
                   />
                 </div>
 
-                <FormField
-                  label="Categoria"
-                  name="categoria"
-                  type="text"
-                  value={formData.categoria}
-                  onChange={handleChange}
-                  required
-                  placeholder="Ex: Eletrônicos, Roupas, etc."
-                  maxLength={50}
-                />
+                {/* Campo Categoria dinâmico */}
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Categoria</span>
+                  </label>
+                  <select
+                    name="categoria"
+                    value={formData.categoria}
+                    onChange={handleChange}
+                    required
+                    className="select select-bordered w-full"
+                  >
+                    <option value="">Selecione uma categoria</option>
+                    {categorias.map((cat) => (
+                      <option key={cat.id} value={cat.nome}>
+                        {cat.nome}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <FileUpload
                   onFileChange={handleFileChange}
-                  maxSize={5}
+                  maxSize={20}
                   acceptedTypes="image/*"
                   label="Imagem do Produto"
                   helperText="Opcional, máximo 5MB"
                 />
               </div>
 
-              {/* Botões de ação */}
               <div className="flex flex-col-reverse sm:flex-row justify-end gap-3 mt-8 pt-6 border-t border-base-300">
                 <button
                   type="button"
