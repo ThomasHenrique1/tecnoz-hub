@@ -11,6 +11,13 @@ export default function FormField({
   maxLength,
   ...props
 }) {
+  const handleChange = (e) => {
+    if (name === "nome") {
+      e.target.value = e.target.value.replace(/,/g, ""); // apenas remove vírgulas
+    }
+    onChange(e); // passa o mesmo event
+  };
+
   return (
     <div className="form-control">
       <label className="label">
@@ -28,7 +35,7 @@ export default function FormField({
         <textarea
           name={name}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           placeholder={placeholder}
           required={required}
           rows={rows}
@@ -42,7 +49,7 @@ export default function FormField({
           name={name}
           type={type}
           value={value}
-          onChange={onChange}
+          onChange={handleChange}
           placeholder={placeholder}
           required={required}
           maxLength={maxLength}
