@@ -122,8 +122,8 @@ export default function NovoProduto() {
         imagem_url = publicUrl;
       }
         const { error } = await supabase.from('produtos').insert([{
-          nome: String(formData.nome).normalize("NFC"),
-          descricao: String(formData.descricao).normalize("NFC"),
+          nome: String(formData.nome).trim("NFC"),
+          descricao: String(formData.descricao).trim("NFC"),
           preco: parseFloat(formData.preco),
           estoque: parseInt(formData.estoque),
           categoria: formData.categoria,

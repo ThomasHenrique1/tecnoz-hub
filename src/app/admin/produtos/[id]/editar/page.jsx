@@ -84,8 +84,8 @@ export default function EditarProdutoPage() {
     const { error } = await supabase
       .from("produtos")
       .update({
-        nome: String(form.nome).normalize("NFC"),
-        descricao: String(form.descricao).normalize("NFC"),
+        nome: String(form.nome).trim("NFC"),
+        descricao: String(form.descricao).trim("NFC"),
         preco: parseFloat(form.preco),
         estoque: parseInt(form.estoque) || 0,
         imagem_url: form.imagem_url || null,
