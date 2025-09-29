@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation'
 import { ErrorMessage } from '@/components/login/ErrorMessage/ErrorMessage'
 import { FormField } from '@/components/login/FormField/FormField'
 import { SubmitButton } from '@/components/login/SubmitButton/SubmitButton'
-import {BackgroundParticles} from '@/components/ui/BackgroundParticles'
+import { BackgroundParticles } from '@/components/ui/BackgroundParticles'
 
 export default function LoginForm() {
   const router = useRouter()
@@ -31,7 +31,6 @@ export default function LoginForm() {
     setLoading(true)
 
     try {
-      // 1. Tentativa de login
       const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.senha,
@@ -39,7 +38,12 @@ export default function LoginForm() {
 
       if (error) throw error
 
-      // 2. Verificar tipo de usuário
+      // Verificar se o email foi confirmado
+      if (!data.user.confirmed_at) {
+        setErro('Email não confirmado. Verifique sua caixa de entrada.')
+        return
+      }
+
       const { data: userData, error: userError } = await supabase
         .from('usuarios')
         .select('tipo_usuario')
@@ -48,7 +52,6 @@ export default function LoginForm() {
 
       if (userError || !userData) throw new Error('Perfil de usuário não encontrado')
 
-      // 3. Redirecionamento
       await router.refresh()
       const redirectPath = userData.tipo_usuario === 'admin' ? '/admin' : '/perfil'
       router.push(redirectPath)
@@ -62,15 +65,15 @@ export default function LoginForm() {
   }
 
   return (
-      <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
       <BackgroundParticles />
-      
+
       <form onSubmit={handleSubmit} className="glass-card max-w-md w-full p-8 rounded-2xl relative z-10">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-white mb-2">Bem-vindo de volta</h1>
           <p className="text-white/80">Entre na sua conta para continuar</p>
         </div>
-        
+
         <div className="space-y-6">
           <FormField
             label="Email"
@@ -82,7 +85,6 @@ export default function LoginForm() {
             required
             disabled={loading}
           />
-
           <FormField
             label="Senha"
             type="password"
