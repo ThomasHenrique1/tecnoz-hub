@@ -8,6 +8,8 @@ import PageHeader from "@/components/produtos/PageHeader/PageHeader"
 import CategoriaSidebar from "@/components/produtos/CategoriaSidebar/CategoriaSidebar"
 import ProdutosGrid from "@/components/produtos/ProdutosGrid/ProdutosGrid"
 
+export const dynamic = 'force-dynamic'
+
 export default function ProdutosPage() {
   const [produtos, setProdutos] = useState([])
   const [categorias, setCategorias] = useState([])
