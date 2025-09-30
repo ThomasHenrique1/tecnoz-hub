@@ -20,7 +20,9 @@ export default function AuthCallback() {
 
       if (data?.session) {
         // Se a sessão for válida, redireciona para o painel
-        router.push('/painel')
+        await router.refresh()
+      const redirectPath = data.session.user.tipo_usuario === 'admin' ? '/admin' : '/perfil'
+      router.push(redirectPath)
       } else {
         // Caso contrário, volta para login
         router.push('/login')
