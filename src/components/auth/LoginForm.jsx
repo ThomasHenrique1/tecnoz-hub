@@ -38,8 +38,8 @@ export default function LoginForm() {
 
       if (error) throw error
 
-      // Verificar se o email foi confirmado
-      if (!data.user.confirmed_at) {
+      // Verificar se o email foi confirmado corretamente
+      if (!data.user.email_confirmed_at) {
         setErro('Email não confirmado. Verifique sua caixa de entrada.')
         return
       }

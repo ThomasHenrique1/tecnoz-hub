@@ -111,15 +111,16 @@ function SignupForm({ onSuccess }) {
       }
 
       const { data, error: signUpError } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.senha,
-        options: {
-          data: {
-            nome: formData.nome,
-            sobrenome: formData.sobrenome
-          }
-        }
-      })
+  email: formData.email,
+  password: formData.senha,
+  options: {
+    emailRedirectTo: `${window.location.origin}/auth/callback`, // rota que processa o login
+    data: {
+      nome: formData.nome,
+      sobrenome: formData.sobrenome
+    }
+  }
+})
 
       if (signUpError) throw signUpError
 
