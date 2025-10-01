@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
 import { useCarrinho } from "@/context/CarrinhoContext"
 import Image from "next/image"
@@ -17,6 +17,7 @@ export default function ProdutoDetalhes({ produto }) {
   const [showErrorModal, setShowErrorModal] = useState(false)
   const [errorMessage, setErrorMessage] = useState("")
   const router = useRouter()
+  const supabase = createClient()
 
   const { atualizarQuantidade } = useCarrinho()
 

@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import NavLogo from "./NavLogo/NavLogo"
 import NavLinks from "./NavLinks/NavLinks"
 import NavSearch from "./NavSearch/NavSearch"
@@ -16,6 +16,7 @@ export default function Navbar() {
   const [fotoPerfil, setFotoPerfil] = useState(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const supabase = createClient()
 
   // Detecta se é mobile
   useEffect(() => {

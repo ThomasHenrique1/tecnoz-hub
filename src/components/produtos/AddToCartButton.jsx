@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import { useCarrinho } from "@/context/CarrinhoContext"
 import { useRouter } from "next/navigation"
 import CartSuccessModal from "@/components/Modal/CartSuccessModal"
@@ -11,6 +11,7 @@ export default function AddToCartButton({ produtoId, className = "", disabled = 
   const [showSuccessModal, setShowSuccessModal] = useState(false)
   const { atualizarQuantidade } = useCarrinho()
   const router = useRouter()
+  const supabase = createClient()
 
   const handleAddToCart = async () => {
     setLoading(true)

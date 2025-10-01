@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
 import { AnimatePresence } from "framer-motion"
 import PedidosHeader from "@/components/pedidos/PedidosHeader/PedidosHeader"
@@ -14,6 +14,7 @@ export default function PedidosPage() {
   const [pedidos, setPedidos] = useState([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const supabase = createClient()
 
   useEffect(() => {
     const fetchPedidos = async () => {

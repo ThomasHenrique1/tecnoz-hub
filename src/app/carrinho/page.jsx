@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
 import LoadingSpinner from "@/components/carrinho/LoadingSpinner/LoadingSpinner"
@@ -38,6 +38,7 @@ export default function CarrinhoPage() {
   const [itemToRemove, setItemToRemove] = useState(null)
   const [notification, setNotification] = useState({ message: "", type: "" })
   const router = useRouter()
+  const supabase = createClient()
 
   // Função para exibir notificações
   const showNotification = (message, type = "success") => {

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 import { ErrorMessage } from '@/components/login/ErrorMessage/ErrorMessage'
 import { FormField } from '@/components/login/FormField/FormField'
@@ -16,6 +16,7 @@ export default function LoginForm() {
   })
   const [erro, setErro] = useState('')
   const [loading, setLoading] = useState(false)
+  const supabase = createClient()
 
   const handleChange = (e) => {
     const { name, value } = e.target

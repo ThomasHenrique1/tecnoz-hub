@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabaseClient'
 import AdminRoute from '@/components/auth/AdminRoute'
 import PedidosTable from '@/components/admin/PedidosTable/PedidosTable'
 import { BackgroundParticles } from '@/components/ui/BackgroundParticles'
@@ -12,6 +12,7 @@ export default function AdminPedidos() {
   const [pedidos, setPedidos] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const supabase = createClient()
 
   const carregarPedidos = async () => {
     try {

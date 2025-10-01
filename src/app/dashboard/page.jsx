@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
 import LoadingSpinner from "@/components/dashboard/LoadingSpinner/LoadingSpinner"
 import DashboardHeader from "@/components/dashboard/DashboardHeader/DashboardHeader"
@@ -16,6 +16,7 @@ export default function DashboardPage() {
   const [usuario, setUsuario] = useState(null)
   const [produtos, setProdutos] = useState([])
   const [pedidos, setPedidos] = useState([])
+  const supabase = createClient()
 
   useEffect(() => {
     const fetchData = async () => {

@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabaseClient'
 import AdminRoute from '@/components/auth/AdminRoute'
 import UsersTable from '@/components/admin/UsersTable/UsersTable'
 import BackButton from '@/components/ui/BackButton'
@@ -15,6 +15,7 @@ export default function AdminUsuarios() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [deletingId, setDeletingId] = useState(null)
+  const supabase = createClient()
 
   useEffect(() => {
     const carregarUsuarios = async () => {

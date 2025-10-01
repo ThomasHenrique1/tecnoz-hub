@@ -2,13 +2,13 @@
 
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { supabase } from "@/lib/supabaseClient"
 import { useEffect, useState } from "react"
 import Image from "next/image" // Importe o componente Image do Next.js
 
 export default function NavProfile({ user, fotoPerfil }) {
   const router = useRouter()
   const [isMobile, setIsMobile] = useState(false)
+
 
   // Detecta se é mobile
   useEffect(() => {

@@ -1,13 +1,13 @@
-// src/app/produtos/[id]/page.jsx
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import Link from "next/link"
 import ProdutoDetalhes from "../ProdutoDetalhes"
-import LoadingSkeleton from "@/components/produtos/LoadingSkeleton/LoadingSkeleton"
 export const dynamic = "force-dynamic"
 
 export default async function ProdutoPage({ params }) {
   const { id } = await params
 
+  const supabase = createClient()
+  
   const { data: produto, error } = await supabase
     .from("produtos")
     .select("id, nome, descricao, preco, estoque, categoria, imagem_url, criado_em")

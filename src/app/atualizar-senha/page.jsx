@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabaseClient'
 import FormInput from '@/components/SignUp/FormInput/FormInput'
 import SubmitButton from '@/components/SignUp/SubmitButton/SubmitButton'
 import ErrorMessage from '@/components/SignUp/ErrorMessage/ErrorMessage'
@@ -14,6 +14,7 @@ export default function UpdatePassword() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
+  const supabase = createClient()
 
   const handleSubmit = async (e) => {
     e.preventDefault()

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
 import AdminRoute from "@/components/auth/AdminRoute"
 import LoadingSpinner from "@/components/admin/Produtos/LoadingSpinner/LoadingSpinner"
@@ -16,6 +16,7 @@ export default function ProdutosComponent() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' })
+  const supabase = createClient()
 
   useEffect(() => {
     const fetchProdutos = async () => {

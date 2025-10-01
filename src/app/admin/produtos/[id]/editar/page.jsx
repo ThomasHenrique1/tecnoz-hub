@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter, usePathname } from "next/navigation"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import AdminRoute from "@/components/auth/AdminRoute"
 import FormField from "@/components/admin/Produtos/FormField/FormField"
 import LoadingSpinner from "@/components/admin/Produtos/LoadingSpinner/LoadingSpinner"
@@ -21,6 +21,7 @@ export default function EditarProdutoPage() {
   })
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const supabase = createClient()
 
   const id = pathname.split("/")[3]
 

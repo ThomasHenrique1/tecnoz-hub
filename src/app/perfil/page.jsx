@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState, useCallback } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 import { ProfileAvatar } from '@/components/perfil/ProfileAvatar/ProfileAvatar'
 import { ProfileFormField } from '@/components/perfil/ProfileFormField/ProfileFormField'
@@ -19,6 +19,7 @@ export default function PerfilPage() {
   const [loading, setLoading] = useState(true)
   const [selectedFile, setSelectedFile] = useState(null)
   const [form, setForm] = useState(initialFormState)
+  const supabase = createClient()
 
   // Busca os dados do perfil
   const fetchPerfil = useCallback(async () => {

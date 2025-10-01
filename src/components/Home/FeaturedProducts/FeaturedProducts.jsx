@@ -4,12 +4,14 @@ import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { FaStar, FaShoppingCart, FaEye } from "react-icons/fa"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
+
 
 export default function FeaturedProducts() {
   const [products, setProducts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const supabase = createClient()
 
   useEffect(() => {
     const fetchFeaturedProducts = async () => {

@@ -1,4 +1,6 @@
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
+
+const supabase = createClient()
 
 export default async function handler(req, res) {
   if (req.method !== "POST") {
@@ -41,6 +43,8 @@ export default async function handler(req, res) {
       }
       total += item.quantidade * item.produto.preco
     }
+
+    
 
     // Criar pedido
     const { data: pedido, error: pedidoError } = await supabase

@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
-import { supabase } from "@/lib/supabaseClient"
+import { createClient } from "@/lib/supabaseClient"
 import LoadingState from "@/components/produtos/LoadingState/LoadingState"
 import PageHeader from "@/components/produtos/PageHeader/PageHeader"
 import CategoriaSidebar from "@/components/produtos/CategoriaSidebar/CategoriaSidebar"
@@ -25,6 +25,7 @@ function ProdutosPageClient() {
   const [categorias, setCategorias] = useState([])
   const [categoriaSelecionada, setCategoriaSelecionada] = useState("")
   const [loading, setLoading] = useState(true)
+  const supabase = createClient()
 
   const searchParams = useSearchParams()
   const categoriaDaUrl = searchParams.get("categoria")

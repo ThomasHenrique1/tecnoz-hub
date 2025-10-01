@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { supabase } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import SubmitButton from '../SignUp/SubmitButton/SubmitButton'
 import ErrorMessage from '../SignUp/ErrorMessage/ErrorMessage'
@@ -71,6 +71,7 @@ function SignupForm({ onSuccess }) {
   const [erro, setErro] = useState('')
   const [emailExists, setEmailExists] = useState(false)
   const [loading, setLoading] = useState(false)
+  const supabase = createClient()
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -110,14 +111,15 @@ function SignupForm({ onSuccess }) {
         return
       }
 
-      const { data, error: signUpError } = await supabase.auth.signUp({
+        const { data, error: signUpError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.senha,
         options: {
           data: {
             nome: formData.nome,
             sobrenome: formData.sobrenome
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/api/auth/confirm` 
         }
       })
 

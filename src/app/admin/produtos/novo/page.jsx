@@ -2,12 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabaseClient';
+import { createClient } from '@/lib/supabaseClient';
 import { v4 as uuidv4 } from 'uuid';
 import AdminRoute from '@/components/auth/AdminRoute';
 import FormField from '@/components/admin/Produtos/FormField/FormField';
 import FileUpload from '@/components/admin/Produtos/FileUpload/FileUpload';
 import LoadingSpinner from '@/components/admin/Produtos/LoadingSpinner/LoadingSpinner';
+
+
+
 
 export default function NovoProduto() {
   const [formData, setFormData] = useState({
@@ -23,6 +26,7 @@ export default function NovoProduto() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [initialCheckComplete, setInitialCheckComplete] = useState(false);
   const router = useRouter();
+  const supabase = createClient();
 
   // Verificar se o usuário é admin ao carregar o componente
   useEffect(() => {
