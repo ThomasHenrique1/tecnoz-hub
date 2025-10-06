@@ -121,7 +121,17 @@ export default function SobrePage() {
                   <FaAward className="w-16 h-16 text-primary mx-auto mb-4" />
                   <h3 className="text-xl font-semibold text-base-content">Imagem da Nossa Oficina</h3>
                   <p className="text-base-content/70 mt-2">
-                    Adicione uma imagem da sua empresa aqui
+                    <Image
+                      src="https://ypxcrzudxqtntiksnydu.supabase.co/storage/v1/object/public/favicon/Logo.png"
+                      alt="Nossa Oficina"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-2xl shadow-md border border-base-200"
+                      style={{ 
+                        objectPosition: '50% 50%', // Centraliza a imagem
+                        transform: 'scale(1.1)' // Dá um zoom para melhorar o enquadramento
+                      }}
+                    />
                   </p>
                 </div>
               </div>
