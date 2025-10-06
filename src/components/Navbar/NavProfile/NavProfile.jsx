@@ -4,10 +4,12 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Image from "next/image" // Importe o componente Image do Next.js
-
+import { createClient } from "@/lib/supabaseClient"
 export default function NavProfile({ user, fotoPerfil }) {
   const router = useRouter()
   const [isMobile, setIsMobile] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const supabase = createClient()
 
 
   // Detecta se é mobile
@@ -41,6 +43,7 @@ export default function NavProfile({ user, fotoPerfil }) {
       
       // 2. Redireciona para a página de login
       router.push('/login')
+      router.refresh() /
       
       // 3. Recarrega a página para garantir limpeza total
       setTimeout(() => {
