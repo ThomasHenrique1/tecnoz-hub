@@ -84,7 +84,7 @@ export default function NovoProduto() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     // normaliza para evitar bugs com acentos
-    setFormData((prev) => ({ ...prev, [name]: value.normalize("NFC") }));
+    setFormData((prev) => ({ ...prev, [name]: value.trim("NFC") }));
   };
 
   const handleFileChange = (file) => {
