@@ -46,14 +46,14 @@ export default function NovoProduto() {
           .single();
 
         if (error || !usuarioData || usuarioData.tipo_usuario !== 'admin') {
-          router.push('/painel');
+          router.push('/');
           return;
         }
 
         setIsAdmin(true);
       } catch (error) {
         console.error('Erro ao verificar admin:', error);
-        router.push('/painel');
+        router.push('/');
       } finally {
         setInitialCheckComplete(true);
       }

@@ -27,14 +27,14 @@ export async function middleware(req) {
 
   // 2. Redirecionamento de rotas protegidas
   if (!user) {
-    // Se tentar acessar /painel ou /admin sem estar logado → redirect para /login
-    if (pathname.startsWith('/painel') || pathname.startsWith('/admin')) {
+    // Se tentar acessar /Dashboard ou /admin sem estar logado → redirect para /login
+    if (pathname.startsWith('/Dashboard') || pathname.startsWith('/admin')) {
       return NextResponse.redirect(new URL('/login', req.url))
     }
   } else {
-    // Usuário logado, mas tentando acessar /login → redirect para painel
+    // Usuário logado, mas tentando acessar /login → redirect para Dashboard
     if (pathname === '/login') {
-      return NextResponse.redirect(new URL('/painel', req.url))
+      return NextResponse.redirect(new URL('/Dashboard', req.url))
     }
 
     // Bloquear acesso a /admin se não for admin
@@ -46,7 +46,7 @@ export async function middleware(req) {
         .single()
 
       if (profileError || !profile || profile.tipo_usuario !== 'admin') {
-        return NextResponse.redirect(new URL('/painel', req.url))
+        return NextResponse.redirect(new URL('/Dashboard', req.url))
       }
     }
   }
@@ -56,7 +56,7 @@ export async function middleware(req) {
 
 export const config = {
   matcher: [
-    '/painel/:path*',
+    '/Dashboard/:path*',
     '/admin/:path*',
     '/login'
   ]
