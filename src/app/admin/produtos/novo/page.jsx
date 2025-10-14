@@ -81,11 +81,18 @@ export default function NovoProduto() {
     fetchCategorias();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    // normaliza para evitar bugs com acentos
-    setFormData((prev) => ({ ...prev, [name]: value.trim("NFC") }));
-  };
+ const handleChange = (e) => {
+  const { name, value } = e.target;
+  
+  let cleanedValue = value;
+  
+  if (name === 'nome' || name === 'descricao') {
+    // Remove apenas as pontuações problemáticas
+     cleanedValue = value.replace(/[;+@#$%^&*=<>[\]{}|\\]/g, '');
+  }
+  
+  setForm(prev => ({ ...prev, [name]: cleanedValue }));
+};
 
   const handleFileChange = (file) => {
     setImagemFile(file);
@@ -126,8 +133,8 @@ export default function NovoProduto() {
         imagem_url = publicUrl;
       }
         const { error } = await supabase.from('produtos').insert([{
-          nome: String(formData.nome).trim("NFC"),
-          descricao: String(formData.descricao).trim("NFC"),
+          nome: String(formData.nome).trim(),
+          descricao: String(formData.descricao).trim(),
           preco: parseFloat(formData.preco),
           estoque: parseInt(formData.estoque),
           categoria: formData.categoria,

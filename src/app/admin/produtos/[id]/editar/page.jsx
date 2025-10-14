@@ -68,9 +68,19 @@ export default function EditarProdutoPage() {
     fetchData()
   }, [id, router])
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value })
+
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  
+  let cleanedValue = value;
+  
+  if (name === 'nome' || name === 'descricao') {
+    // Remove apenas as pontuações problemáticas
+     cleanedValue = value.replace(/[;+@#$%^&*=<>[\]{}|\\]/g, '');
   }
+  
+  setForm(prev => ({ ...prev, [name]: cleanedValue }));
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -85,8 +95,8 @@ export default function EditarProdutoPage() {
     const { error } = await supabase
       .from("produtos")
       .update({
-        nome: String(form.nome).trim("NFC"),
-        descricao: String(form.descricao).trim("NFC"),
+        nome: String(form.nome).trim(),
+        descricao: String(form.descricao).trim(),
         preco: parseFloat(form.preco),
         estoque: parseInt(form.estoque) || 0,
         imagem_url: form.imagem_url || null,
@@ -143,17 +153,20 @@ export default function EditarProdutoPage() {
                   onChange={handleChange}
                   required
                   placeholder="Nome do produto"
-                />
+                  rows={1}
+                  maxLength={255} // Aumente conforme necessário
+                  />
 
-                <FormField
-                  label="Descrição"
-                  name="descricao"
-                  type="textarea"
-                  value={form.descricao}
-                  onChange={handleChange}
-                  placeholder="Descrição detalhada do produto"
-                  rows={4}
-                />
+               <FormField
+                label="Descrição"
+                name="descricao"
+                type="textarea"
+                value={form.descricao}
+                onChange={handleChange} // Sem validação especial para descrição
+                placeholder="Descrição detalhada do produto"
+                rows={6}
+                maxLength={1000} // Ou mais, conforme necessário
+              />
 
                 {/* Categoria */}
                 <div className="form-control">
