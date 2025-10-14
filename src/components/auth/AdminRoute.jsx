@@ -54,7 +54,7 @@ export default function AdminRoute({ children }) {
         if (error.message.includes("Não autenticado")) {
           router.push("/login?redirect=" + encodeURIComponent(window.location.pathname))
         } else {
-          router.push("/Dashboard")
+          router.push("/dashboard")
         }
       }
     }
