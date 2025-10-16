@@ -18,8 +18,6 @@ export default function ProdutosPage() {
     </Suspense>
   )
 }
-
-// Componente 100% client-side, que usa hooks de navegação
 function ProdutosPageClient() {
   const [produtos, setProdutos] = useState([])
   const [categorias, setCategorias] = useState([])
