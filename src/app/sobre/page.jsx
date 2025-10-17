@@ -184,31 +184,55 @@ export default function SobrePage() {
         </div>
       </section>
 
-      {/* Linha do Tempo */}
-      <section className="py-16 bg-base-100">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-base-content text-center mb-12">Nossa Jornada</h2>
-          <div className="max-w-4xl mx-auto">
-            <div className="relative">
-              <div className="absolute left-5 md:left-1/2 h-full w-1 bg-primary/20 transform -translate-x-1/2"></div>
-              
-              {timeline.map((item, index) => (
-                <div key={index} className={`flex flex-col md:flex-row ${index % 2 === 0 ? 'md:flex-row-reverse' : ''} items-center mb-12`}>
-                  <div className="md:w-1/2 flex justify-center md:justify-end mb-4 md:mb-0">
-                    <div className="bg-primary text-primary-content rounded-full w-12 h-12 flex items-center justify-center font-bold z-10">
-                      {item.year}
-                    </div>
-                  </div>
-                  <div className="md:w-1/2 p-6 bg-base-200 rounded-2xl shadow-sm">
-                    <h3 className="text-xl font-semibold text-base-content mb-2">{item.title}</h3>
-                    <p className="text-base-content/70">{item.description}</p>
+     {/* Linha do Tempo */}
+<section className="py-16 bg-base-100">
+  <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 className="text-3xl font-bold text-base-content text-center mb-12">Nossa Jornada</h2>
+    <div className="max-w-4xl mx-auto">
+      <ul className="timeline timeline-vertical">
+        {timeline.map((item, index) => (
+          <li key={index}>
+            {/* Linha entre os itens */}
+            {index !== 0 && <hr className="bg-primary/20" />}
+            
+            {/* Conteúdo do lado esquerdo para índices pares */}
+            {index % 2 === 0 && (
+              <>
+                <div className="timeline-start timeline-box bg-base-200 border-base-300 text-base-content">
+                  <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                  <p className="text-base-content/70">{item.description}</p>
+                </div>
+                <div className="timeline-middle">
+                  <div className="bg-primary text-primary-content rounded-full w-12 h-12 flex items-center justify-center font-bold">
+                    {item.year}
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
+              </>
+            )}
+            
+            {/* Conteúdo do lado direito para índices ímpares */}
+            {index % 2 === 1 && (
+              <>
+                <div className="timeline-middle">
+                  <div className="bg-primary text-primary-content rounded-full w-12 h-12 flex items-center justify-center font-bold">
+                    {item.year}
+                  </div>
+                </div>
+                <div className="timeline-end timeline-box bg-base-200 border-base-300 text-base-content">
+                  <h3 className="text-xl font-semibold mb-2">{item.title}</h3>
+                  <p className="text-base-content/70">{item.description}</p>
+                </div>
+              </>
+            )}
+            
+            {/* Linha após o último item */}
+            {index !== timeline.length - 1 && <hr className="bg-primary/20" />}
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
 
       {/* Valores */}
       <section className="py-16 bg-base-200">
