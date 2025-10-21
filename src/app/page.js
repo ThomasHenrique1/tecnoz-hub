@@ -17,8 +17,14 @@ import {
   FaUndo,
   FaStar,
   FaChevronLeft,
-  FaChevronRight
+  FaChevronRight,
+  FaMemory,
+  FaFan,
+  FaHdd  
 } from "react-icons/fa"
+import { GiProcessor } from "react-icons/gi";
+import { PiGraphicsCardFill } from "react-icons/pi";
+import { BsFillMotherboardFill } from "react-icons/bs";
 import HeroSection from "@/components/Home/HeroSection/HeroSection"
 import CategoryGrid from "@/components/Home/CategoryGrid/CategoryGrid"
 import FeaturedProducts from "@/components/Home/FeaturedProducts/FeaturedProducts"
@@ -30,17 +36,17 @@ export default function HomePage() {
   const [currentSlide, setCurrentSlide] = useState(0)
 
   const categorias = [
-    { name: "Placa-Mãe", icon: FaMicrochip, count: "32 produtos" },
-    { name: "Memória RAM", icon: FaMicrochip, count: "28 produtos" },
-    { name: "Cooler", icon: FaDesktop, count: "15 produtos" },
-    { name: "FAN", icon: FaDesktop, count: "12 produtos" },
+    { name: "Placa-Mãe", icon: BsFillMotherboardFill, count: "32 produtos" },
+    { name: "Memória RAM", icon: FaMemory, count: "28 produtos" },
+    { name: "Cooler", icon: FaFan, count: "15 produtos" },
+    { name: "FAN", icon: FaFan, count: "12 produtos" },
     { name: "Mouse", icon: FaMouse, count: "45 produtos" },
     { name: "Teclado", icon: FaKeyboard, count: "38 produtos" },
     { name: "Fone", icon: FaHeadphones, count: "52 produtos" },
     { name: "Gabinete", icon: FaDesktop, count: "25 produtos" },
-    { name: "Processadores", icon: FaMicrochip, count: "18 produtos" },
-    { name: "SSD/HD", icon: FaMicrochip, count: "42 produtos" },
-    { name: "Placa de Vídeo", icon: FaDesktop, count: "22 produtos" },
+    { name: "Processadores", icon: GiProcessor, count: "18 produtos" },
+    { name: "SSD/HD", icon: FaHdd , count: "42 produtos" },
+    { name: "Placa de Vídeo", icon: PiGraphicsCardFill, count: "22 produtos" },
     { name: "Notebooks", icon: FaLaptop, count: "30 produtos" },
   ]
 
@@ -167,13 +173,13 @@ export default function HomePage() {
       <TestimonialsSection />
 
       {/* Newsletter Section */}
-      <section className="py-20  text-primary-content">
+      <section className="py-20">
   <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
     <div className="max-w-2xl mx-auto">
       <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
         Fique por Dentro das Novidades
       </h2>
-      <p className="text-primary-content/80 text-lg md:text-xl mb-10">
+      <p className="text-lg md:text-xl mb-10">
         Cadastre-se para receber ofertas exclusivas e novidades em primeira mão
       </p>
 
@@ -188,7 +194,7 @@ export default function HomePage() {
         </button>
       </div>
 
-      <p className="text-sm text-primary-content/70 mt-5 italic">
+      <p className="text-sm mt-5 italic">
         Respeitamos sua privacidade. Você pode cancelar a qualquer momento.
       </p>
     </div>

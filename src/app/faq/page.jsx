@@ -169,7 +169,7 @@ export default function FAQPage() {
     <div className="min-h-screen bg-base-100">
         <BackgroundParticles />
       {/* Hero Section */}
-      <section className="py-16  text-primary-content">
+      <section className="py-16 ">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Perguntas Frequentes</h1>
           <p className="text-xl max-w-3xl mx-auto mb-8">
@@ -287,13 +287,13 @@ export default function FAQPage() {
       </section>
 
       {/* Newsletter Section */}
-      <section className="py-16 text-primary-content">
+      <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="max-w-2xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Fique Por Dentro das Novidades
             </h2>
-            <p className="text-primary-content/80 text-lg mb-8">
+            <p className="text-lg mb-8">
               Cadastre-se para receber ofertas exclusivas e novidades em primeira mão
             </p>
             

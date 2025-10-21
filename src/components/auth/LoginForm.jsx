@@ -71,8 +71,8 @@ export default function LoginForm() {
 
       <form onSubmit={handleSubmit} className="glass-card max-w-md w-full p-8 rounded-2xl relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Bem-vindo de volta</h1>
-          <p className="text-white/80">Entre na sua conta para continuar</p>
+          <h1 className="text-3xl font-bold mb-2">Bem-vindo de volta</h1>
+          <p className="">Entre na sua conta para continuar</p>
         </div>
 
         <div className="space-y-6">
@@ -99,7 +99,7 @@ export default function LoginForm() {
         </div>
 
         <div className="flex justify-end mt-2">
-          <a href="/recuperar-senha" className="text-sm text-white/70 hover:text-white transition-colors">
+          <a href="/recuperar-senha" className="text-sm text-blue-700 hover:text-white transition-colors">
             Esqueceu a senha?
           </a>
         </div>
@@ -110,9 +110,9 @@ export default function LoginForm() {
           {loading ? 'Entrando...' : 'Entrar'}
         </SubmitButton>
 
-        <div className="text-center mt-6 text-white/70 text-sm">
+        <div className="text-center mt-6 text-sm">
           Não tem uma conta?{' '}
-          <a href="/signup" className="text-white font-medium hover:underline">
+          <a href="/signup" className="text-blue-500 font-medium hover:underline">
             Cadastre-se
           </a>
         </div>

@@ -93,7 +93,7 @@ export default function SobrePage() {
   return (
     <div className="min-h-screen bg-base-100">
       {/* Hero Section */}
-      <section className="relative py-20 text-primary-content">
+      <section className="relative py-20 ">
         <BackgroundParticles />
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Sobre a TecnozHub</h1>
@@ -294,7 +294,7 @@ export default function SobrePage() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-16  text-primary-content">
+      <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold mb-6">Pronto para montar seu PC dos sonhos?</h2>
           <p className="text-xl max-w-2xl mx-auto mb-8">
