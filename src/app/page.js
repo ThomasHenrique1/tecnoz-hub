@@ -2,25 +2,18 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import Image from "next/image"
-import { 
-  FaArrowRight, 
-  FaHeadphones, 
-  FaKeyboard, 
-  FaMouse, 
-  FaMicrochip,
+import {
+  FaArrowRight,
+  FaHeadphones,
+  FaKeyboard,
+  FaMouse,
   FaDesktop,
   FaLaptop,
-  FaGamepad,
-  FaShieldAlt,
-  FaTruck,
-  FaUndo,
-  FaStar,
   FaChevronLeft,
   FaChevronRight,
   FaMemory,
   FaFan,
-  FaHdd  
+  FaHdd
 } from "react-icons/fa"
 import { GiProcessor } from "react-icons/gi";
 import { PiGraphicsCardFill } from "react-icons/pi";
@@ -45,25 +38,25 @@ export default function HomePage() {
     { name: "Fone", icon: FaHeadphones, count: "52 produtos" },
     { name: "Gabinete", icon: FaDesktop, count: "25 produtos" },
     { name: "Processadores", icon: GiProcessor, count: "18 produtos" },
-    { name: "SSD/HD", icon: FaHdd , count: "42 produtos" },
+    { name: "SSD/HD", icon: FaHdd, count: "42 produtos" },
     { name: "Placa de Vídeo", icon: PiGraphicsCardFill, count: "22 produtos" },
     { name: "Notebooks", icon: FaLaptop, count: "30 produtos" },
   ]
 
   const banners = [
     {
-      title: "Ofertas de Verão",
+      title: "Ofertas",
       subtitle: "Até 40% OFF em Periféricos",
       image: "/banners/summer-sale.jpg",
       cta: "Ver Ofertas",
-      link: "/produtos?ofertas=verao"
+      link: "/produtos"
     },
     {
-      title: "Novidades 2024",
+      title: "Novidades 2025",
       subtitle: "As melhores tecnologias chegaram",
       image: "/banners/new-arrivals.jpg",
       cta: "Descobrir",
-      link: "/produtos?novidades=true"
+      link: "/produtos"
     },
     {
       title: "Frete Grátis",
@@ -74,11 +67,28 @@ export default function HomePage() {
     }
   ]
 
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? banners.length - 1 : prev - 1));
+  };
+
+  // Auto-play do carrossel
+  useEffect(() => {
+    const interval = setInterval(() => {
+      nextSlide();
+    }, 5000); // Muda a cada 5 segundos
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
       <HeroSection />
-      
+
       {/* Categories Section */}
       <section className="py-16 bg-base-100">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -92,10 +102,10 @@ export default function HomePage() {
           </div>
 
           <CategoryGrid categories={categorias} />
-          
+
           <div className="text-center mt-12">
-            <Link 
-              href="/produtos" 
+            <Link
+              href="/produtos"
               className="btn btn-primary btn-lg group"
             >
               Ver Todos os Produtos
@@ -105,7 +115,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Promo Banner Carousel */}
+      {/* Promo Banner Carousel - CORRIGIDO */}
       <section className="py-12 bg-base-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative">
@@ -113,28 +123,50 @@ export default function HomePage() {
               {banners.map((banner, index) => (
                 <div
                   key={index}
-                  className="carousel-item relative w-full"
+                  className={`carousel-item relative w-full transition-opacity duration-500 ${
+                    index === currentSlide ? 'block' : 'hidden'
+                  }`}
                 >
-                   <PromoBanner
-                    title="Ofertas de Verão"
-                    subtitle="Até 40% OFF em produtos selecionados"
-                    cta="Ver Ofertas"
-                    link="/ofertas"
-                    badge="Queima Estoque"
-                    discount="40%"
-                    timer="02:15:33"
+                  <PromoBanner
+                    title={banner.title}
+                    subtitle={banner.subtitle}
+                    cta={banner.cta}
+                    link={banner.link}
+                    image={banner.image}
+                    badge={index === 0 ? "Queima Estoque" : index === 1 ? "Novidade" : "Promoção"}
+                    discount={index === 0 ? "40%" : index === 1 ? "Novo" : "Grátis"}
                   />
                 </div>
               ))}
             </div>
-            
+
+            {/* Botões de navegação - CORRIGIDOS */}
             <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
-              <button className="btn btn-circle btn-ghost text-white">
+              <button 
+                onClick={prevSlide} 
+                className="btn btn-circle btn-ghost hover:bg-white/20 text-white"
+              >
                 <FaChevronLeft className="w-4 h-4" />
               </button>
-              <button className="btn btn-circle btn-ghost text-white">
+              <button 
+                onClick={nextSlide} 
+                className="btn btn-circle btn-ghost hover:bg-white/20 text-white"
+              >
                 <FaChevronRight className="w-4 h-4" />
               </button>
+            </div>
+
+            {/* Indicadores - CORRIGIDOS (no local certo) */}
+            <div className="flex justify-center mt-4 gap-2">
+              {banners.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => setCurrentSlide(index)}
+                  className={`w-3 h-3 rounded-full transition-all ${
+                    index === currentSlide ? 'bg-primary scale-125' : 'bg-gray-300 hover:bg-gray-400'
+                  }`}
+                />
+              ))}
             </div>
           </div>
         </div>
@@ -153,10 +185,10 @@ export default function HomePage() {
           </div>
 
           <FeaturedProducts />
-          
+
           <div className="text-center mt-12">
-            <Link 
-              href="/produtos?destaques=true" 
+            <Link
+              href="/produtos?destaques=true"
               className="btn btn-outline btn-primary btn-lg group"
             >
               Ver Mais Destaques
@@ -174,33 +206,32 @@ export default function HomePage() {
 
       {/* Newsletter Section */}
       <section className="py-20">
-  <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-    <div className="max-w-2xl mx-auto">
-      <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
-        Fique por Dentro das Novidades
-      </h2>
-      <p className="text-lg md:text-xl mb-10">
-        Cadastre-se para receber ofertas exclusivas e novidades em primeira mão
-      </p>
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="max-w-2xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6">
+              Fique por Dentro das Novidades
+            </h2>
+            <p className="text-lg md:text-xl mb-10">
+              Cadastre-se para receber ofertas exclusivas e novidades em primeira mão
+            </p>
 
-      <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
-        <input 
-          type="email" 
-          placeholder="Seu melhor email" 
-          className="input input-bordered flex-1 text-base-content rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/60"
-        />
-        <button className="btn btn-secondary px-6 rounded-xl shadow-md hover:shadow-lg transition duration-200">
-          Inscrever-se
-        </button>
-      </div>
+            <div className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto">
+              <input
+                type="email"
+                placeholder="Seu melhor email"
+                className="input input-bordered flex-1 text-base-content rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-secondary/60"
+              />
+              <button className="btn btn-secondary px-6 rounded-xl shadow-md hover:shadow-lg transition duration-200">
+                Inscrever-se
+              </button>
+            </div>
 
-      <p className="text-sm mt-5 italic">
-        Respeitamos sua privacidade. Você pode cancelar a qualquer momento.
-      </p>
-    </div>
-  </div>
-</section>
-
+            <p className="text-sm mt-5 italic">
+              Respeitamos sua privacidade. Você pode cancelar a qualquer momento.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   )
 }
