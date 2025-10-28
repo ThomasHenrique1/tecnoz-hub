@@ -124,7 +124,7 @@ export default function NavProfile({ user, fotoPerfil }) {
       <ul 
         tabIndex={0} 
         className={`menu menu-sm dropdown-content mt-3 z-[100] p-2 shadow-2xl bg-base-100 rounded-box border border-base-300/50 backdrop-blur-sm transition-all duration-300 ${
-          isMobile ? 'w-full left-0' : 'w-56'
+          isMobile ? 'left-auto min-w-[100px] ' : 'left-auto min-w-[200px]'
         } ${isDropdownOpen ? 'opacity-100 scale-100' : 'opacity-0 scale-95 pointer-events'}`}
       >
         {/* Header do usuário */}
