@@ -47,21 +47,21 @@ export default function HomePage() {
     {
       title: "Ofertas",
       subtitle: "Até 40% OFF em Periféricos",
-      image: "/banners/summer-sale.jpg",
+      image: "https://ypxcrzudxqtntiksnydu.supabase.co/storage/v1/object/public/banners/offer.png",
       cta: "Ver Ofertas",
       link: "/produtos"
     },
     {
-      title: "Novidades 2025",
+      title: "Novidades",
       subtitle: "As melhores tecnologias chegaram",
-      image: "/banners/new-arrivals.jpg",
+      image: "https://ypxcrzudxqtntiksnydu.supabase.co/storage/v1/object/public/banners/new.png",
       cta: "Descobrir",
       link: "/produtos"
     },
     {
       title: "Frete Grátis",
       subtitle: "Em compras acima de R$ 299",
-      image: "/banners/free-shipping.jpg",
+      image: "https://ypxcrzudxqtntiksnydu.supabase.co/storage/v1/object/public/banners/freight.png",
       cta: "Comprar Agora",
       link: "/produtos"
     }
@@ -115,7 +115,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Promo Banner Carousel - CORRIGIDO */}
+      {/* Promo Banner Carousel */}
       <section className="py-12 bg-base-200">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="relative">
