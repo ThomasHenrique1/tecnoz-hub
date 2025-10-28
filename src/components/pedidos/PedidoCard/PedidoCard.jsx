@@ -10,7 +10,7 @@ export default function PedidoCard({ pedido }) {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className="card bg-base-100 shadow-sm hover:shadow-md transition-all duration-300 mb-6 border border-base-300 rounded-box overflow-hidden"
