@@ -4,15 +4,15 @@ import Image from "next/image"
 import { FaArrowRight, FaTag, FaClock, FaTruck, FaImage } from "react-icons/fa"
 import { useState } from "react"
 
-export default function PromoBanner({ 
-  title = "Ofertas Especiais", 
-  subtitle = "Aproveite nossas promoções exclusivas", 
-  image = null, 
-  cta = "Ver Ofertas", 
+export default function PromoBanner({
+  title = "Ofertas Especiais",
+  subtitle = "Aproveite nossas promoções exclusivas",
+  image = null,
+  cta = "Ver Ofertas",
   link = "/produtos",
   badge,
   timer,
-  discount 
+  discount
 }) {
   const [imageError, setImageError] = useState(false)
   const [imageLoading, setImageLoading] = useState(!!image)
@@ -21,50 +21,50 @@ export default function PromoBanner({
   const gradientBg = "bg-gradient-to-r from-primary to-secondary"
 
   return (
-    <div className="relative w-full h-64 md:h-96 lg:h-[500px] overflow-hidden group">
+    <div className="relative w-full h-64 md:h-96 lg:h-[550px] overflow-hidden group">
       {/* Imagem de fundo (apenas se for fornecida e não tiver erro) */}
       {image && !imageError && (
         <Image
           src={image}
           alt={title}
           fill
-          className="object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
+          className="object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out brightness-110 contrast-105"
           priority
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          onLoadingComplete={() => setImageLoading(false)}
+          onLoad={() => setImageLoading(false)}
           onError={() => setImageError(true)}
         />
       )}
-      
+
       {/* Loading state para imagem */}
       {imageLoading && (
         <div className="absolute inset-0 bg-base-300 animate-pulse flex items-center justify-center">
           <FaImage className="w-12 h-12 text-base-content/30 animate-pulse" />
         </div>
       )}
-      
-      {/* Fundo gradiente quando não há imagem ou ocorre erro */}
+
       {(!image || imageError) && (
         <div className={`absolute inset-0 ${gradientBg}`}>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(255,255,255,0.1)_1px,transparent_0)] bg-[length:20px_20px]"></div>
         </div>
       )}
-      
+
       {/* Overlay gradiente */}
-      <div className={`absolute inset-0 ${
-        image && !imageError 
-          ? 'bg-gradient-to-r from-black/60 via-black/40 to-black/20' 
-          : 'bg-black/30'
-      } group-hover:bg-black/40 transition-all duration-500`}></div>
-      
-     
+      <div
+        className={`absolute inset-0 ${image && !imageError
+            ? 'bg-gradient-to-r from-black/30 via-black/10 to-transparent'
+            : 'bg-black/20'
+          } group-hover:from-black/40 group-hover:via-black/20 group-hover:to-transparent transition-all duration-500`}
+      ></div>
+
+
       <div className="absolute top-6 left-6 w-24 h-24 bg-primary/20 rounded-full blur-xl animate-pulse"></div>
       <div className="absolute bottom-6 right-6 w-32 h-32 bg-secondary/20 rounded-full blur-xl animate-pulse"></div>
 
       {/* Conteúdo */}
       <div className="absolute inset-0 flex items-center justify-center text-white">
         <div className="max-w-2xl mx-auto p-6 text-center relative z-10">
-          
+
           {/* Badge de promoção */}
           {(badge || discount) && (
             <div className="inline-flex items-center bg-white/20 backdrop-blur-sm text-white px-6 py-2 rounded-full mb-6 animate-bounce border border-white/30">
@@ -94,7 +94,7 @@ export default function PromoBanner({
           </p>
 
           {/* CTA Button */}
-          <Link 
+          <Link
             href={link}
             className="btn btn-secondary btn-lg group relative overflow-hidden rounded-btn px-8 py-4 text-lg font-semibold shadow-2xl hover:shadow-3xl transform hover:-translate-y-1 transition-all duration-300"
             style={{ borderRadius: 'var(--radius-field, 1rem)' }}
@@ -103,7 +103,7 @@ export default function PromoBanner({
               {cta}
               <FaArrowRight className="ml-3 group-hover:translate-x-2 transition-transform" />
             </span>
-            
+
             {/* Efeito de brilho no hover */}
             <span className="absolute inset-0 bg-white/20 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700"></span>
           </Link>
