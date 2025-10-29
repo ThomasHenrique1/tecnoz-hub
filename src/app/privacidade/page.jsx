@@ -46,7 +46,7 @@ export default function PrivacyPolicyPage() {
           </p>
           <p>
             Ao acessar ou utilizar nosso site, você concorda com os termos desta Política de 
-            Privacidade. Se você não concordar com esta política, por favor, não utilize nosso site.
+            Privacidade.
           </p>
           <p>
             Esta política está em conformidade com a Lei Geral de Proteção de Dados (LGPD - Lei nº 13.709/2018) 
@@ -463,13 +463,13 @@ export default function PrivacyPolicyPage() {
     <div className="min-h-screen bg-base-100">
       <BackgroundParticles />
       {/* Hero Section */}
-      <section className="py-16 text-primary-content">
+      <section className="py-16">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-5xl font-bold mb-6">Política de Privacidade</h1>
           <p className="text-xl max-w-3xl mx-auto mb-8">
             Saiba como protegemos e tratamos seus dados pessoais
           </p>
-          <div className="badge badge-secondary badge-lg p-4">
+          <div className="badge badge-secondary badge-lg p-5">
             Última atualização: {lastUpdate}
           </div>
         </div>
