@@ -81,18 +81,18 @@ export default function NovoProduto() {
     fetchCategorias();
   }, []);
 
- const handleChange = (e) => {
-  const { name, value } = e.target;
-  
-  let cleanedValue = value;
-  
-  if (name === 'nome' || name === 'descricao') {
-    // Remove apenas as pontuações problemáticas
-     cleanedValue = value.replace(/[;+@#$%^&*=<>[\]{}|\\]/g, '');
-  }
-  
-  setForm(prev => ({ ...prev, [name]: cleanedValue }));
-};
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    
+    let cleanedValue = value;
+    
+    if (name === 'nome' || name === 'descricao') {
+      // Remove apenas as pontuações problemáticas
+      cleanedValue = value.replace(/[;+@#$%^&*=<>[\]{}|\\]/g, '');
+    }
+    
+    setFormData(prev => ({ ...prev, [name]: cleanedValue }));
+  };
 
   const handleFileChange = (file) => {
     setImagemFile(file);
@@ -201,7 +201,6 @@ export default function NovoProduto() {
                   onChange={handleChange}
                   required
                   placeholder="Descreva o produto em detalhes..."
-                  rows={4}
                   maxLength={1000}
                 />
 
