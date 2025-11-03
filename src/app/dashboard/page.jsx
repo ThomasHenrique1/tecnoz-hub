@@ -56,12 +56,12 @@ export default function DashboardPage() {
       <DashboardHeader nomeUsuario={usuario?.nome} />
 
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Produtos Disponíveis</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-primary">Produtos Disponíveis</h2>
         <ProductList produtos={produtos} />
       </section>
 
       <section>
-        <h2 className="text-2xl font-semibold mb-6 text-gray-800">Meus Pedidos</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-primary">Meus Pedidos</h2>
         <OrderTable pedidos={pedidos} />
       </section>
     </main>
