@@ -37,8 +37,8 @@ export default function HomePage() {
     { name: "Teclado", icon: FaKeyboard, count: "38 produtos" },
     { name: "Fone", icon: FaHeadphones, count: "52 produtos" },
     { name: "Gabinete", icon: FaDesktop, count: "25 produtos" },
-    { name: "Processadores", icon: GiProcessor, count: "18 produtos" },
-    { name: "SSD/HD", icon: FaHdd, count: "42 produtos" },
+    { name: "Processador", icon: GiProcessor, count: "18 produtos" },
+    { name: "Armazenamento", icon: FaHdd, count: "42 produtos" },
     { name: "Placa de Vídeo", icon: PiGraphicsCardFill, count: "22 produtos" },
     { name: "Notebooks", icon: FaLaptop, count: "30 produtos" },
   ]
