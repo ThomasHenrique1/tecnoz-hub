@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
+import LoadingSpinner from "../ui/LoadingSpinner"
 
 export default function AdminRoute({ children }) {
   const router = useRouter()
@@ -60,29 +61,12 @@ export default function AdminRoute({ children }) {
     }
 
     checkAdmin()
-  }, [router])
+  }, [router , supabase])
 
   // Estados de renderização
   if (authState.status === 'loading') {
     return (
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        gap: '1rem'
-      }}>
-        <div style={{
-          width: '50px',
-          height: '50px',
-          border: '5px solid #f3f3f3',
-          borderTop: '5px solid #3498db',
-          borderRadius: '50%',
-          animation: 'spin 1s linear infinite'
-        }}></div>
-        <p style={{ fontSize: '1.2rem' }}>Verificando permissões...</p>
-      </div>
+      <LoadingSpinner size={10} color="text-primary" label="Verificando permissões..." fullScreen />
     )
   }
 
@@ -92,11 +76,3 @@ export default function AdminRoute({ children }) {
 
   return <>{children}</>
 }
-
-// Adicione isso no seu CSS global (globals.css)
-/*
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-*/

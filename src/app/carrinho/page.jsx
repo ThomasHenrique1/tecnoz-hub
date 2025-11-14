@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
 import { AnimatePresence, motion } from "framer-motion"
-import LoadingSpinner from "@/components/carrinho/LoadingSpinner/LoadingSpinner"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import EmptyCart from "@/components/carrinho/EmptyCart/EmptyCart"
 import CarrinhoHeader from "@/components/carrinho/CarrinhoHeader/CarrinhoHeader"
 import CarrinhoItem from "@/components/carrinho/CarrinhoItem/CarrinhoItem"
@@ -199,7 +199,7 @@ export default function CarrinhoPage() {
     }
   }
 
-  if (loading) return <LoadingSpinner />
+  if (loading) return <LoadingSpinner size={10} color="text-primary" label="Carregando carrinho..." fullScreen />
   if (itens.length === 0) return <EmptyCart />
 
   const total = itens.reduce(

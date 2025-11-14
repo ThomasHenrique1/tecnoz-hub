@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
 import AdminRoute from "@/components/auth/AdminRoute"
-import LoadingSpinner from "@/components/admin/Produtos/LoadingSpinner/LoadingSpinner"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import ProductTableRow from "@/components/admin/Produtos/ProductTableRow/ProductTableRow"
 import SearchFilter from "@/components/admin/Produtos/SearchFilter/SearchFilter"
 import { BackgroundParticles } from "@/components/ui/BackgroundParticles"
@@ -78,7 +78,7 @@ export default function ProdutosComponent() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base-200">
-        <LoadingSpinner text="Carregando produtos..." />
+        <LoadingSpinner size={10} color="text-primary" label="Carregando produtos..." fullScreen />
       </div>
     )
   }

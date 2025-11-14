@@ -5,7 +5,7 @@ import { useRouter, usePathname } from "next/navigation"
 import { createClient } from "@/lib/supabaseClient"
 import AdminRoute from "@/components/auth/AdminRoute"
 import FormField from "@/components/admin/Produtos/FormField/FormField"
-import LoadingSpinner from "@/components/admin/Produtos/LoadingSpinner/LoadingSpinner"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
 
 export default function EditarProdutoPage() {
   const router = useRouter()
@@ -118,7 +118,7 @@ const handleChange = (e) => {
   if (loading)
     return (
       <div className="flex justify-center items-center min-h-64">
-        <LoadingSpinner text="Carregando dados do produto..." />
+        <LoadingSpinner size={8} color="text-primary" label="Carregando produto..." fullScreen />
       </div>
     )
 

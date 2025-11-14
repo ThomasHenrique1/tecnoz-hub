@@ -3,9 +3,8 @@
 import { useEffect, useState } from "react"
 import { createClient } from "@/lib/supabaseClient"
 import { useRouter } from "next/navigation"
-import LoadingSpinner from "@/components/dashboard/LoadingSpinner/LoadingSpinner"
+import LoadingSpinner from "@/components/ui/LoadingSpinner"
 import DashboardHeader from "@/components/dashboard/DashboardHeader/DashboardHeader"
-import ProductList from "@/components/dashboard/ProductList/ProductList"
 import OrderTable from "@/components/dashboard/OrderTable/OrderTable"
 
 
@@ -49,16 +48,11 @@ export default function DashboardPage() {
     fetchData()
   }, [router])
 
-  if (loading) return <LoadingSpinner />
+  if (loading) return <LoadingSpinner size={10} color="text-primary" label="Carregando dashboard..." fullScreen />
 
   return (
     <main className="container mx-auto px-4 py-8">
       <DashboardHeader nomeUsuario={usuario?.nome} />
-
-      <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-6 text-primary">Produtos Disponíveis</h2>
-        <ProductList produtos={produtos} />
-      </section>
 
       <section>
         <h2 className="text-2xl font-semibold mb-6 text-primary">Meus Pedidos</h2>

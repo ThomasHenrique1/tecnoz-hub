@@ -7,7 +7,7 @@ import { v4 as uuidv4 } from 'uuid';
 import AdminRoute from '@/components/auth/AdminRoute';
 import FormField from '@/components/admin/Produtos/FormField/FormField';
 import FileUpload from '@/components/admin/Produtos/FileUpload/FileUpload';
-import LoadingSpinner from '@/components/admin/Produtos/LoadingSpinner/LoadingSpinner';
+import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 
 
@@ -158,7 +158,7 @@ export default function NovoProduto() {
   if (!initialCheckComplete) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-base-200">
-        <LoadingSpinner text="Verificando permissões de acesso..." />
+        <LoadingSpinner size={10} color="text-primary" label="Verificando permissões de acesso..." fullScreen />
       </div>
     );
   }
