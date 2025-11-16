@@ -8,6 +8,7 @@ import PedidosHeader from "@/components/pedidos/PedidosHeader/PedidosHeader"
 import LoadingPedidos from "@/components/pedidos/LoadingPedidos/LoadingPedidos"
 import EmptyPedidos from "@/components/pedidos/EmptyPedidos/EmptyPedidos"
 import PedidoCard from "@/components/pedidos/PedidoCard/PedidoCard"
+import { BackgroundParticles } from "@/components/ui/BackgroundParticles"
 
 
 export default function PedidosPage() {
@@ -63,6 +64,7 @@ export default function PedidosPage() {
 
   return (
     <main className="container mx-auto px-4 py-8">
+      <BackgroundParticles />
       <PedidosHeader />
       
       <div className="space-y-6">
