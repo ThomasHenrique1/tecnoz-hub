@@ -21,7 +21,7 @@ export default function ProdutosPage() {
 function ProdutosPageClient() {
   const [produtos, setProdutos] = useState([])
   const [categorias, setCategorias] = useState([])
-  const [categoriaSelecionada, setCategoriaSelecionada] = useState("")
+  const [categoriaSelecionada, setCategoriaSelecionada] = useState("Todas")
   const [loading, setLoading] = useState(true)
   const supabase = createClient()
 
@@ -47,7 +47,7 @@ function ProdutosPageClient() {
       const categoriaInicial =
         categoriaDaUrl && categoriasUnicas.includes(categoriaDaUrl)
           ? categoriaDaUrl
-          : categoriasUnicas[0]
+          : "Todas"
 
       setCategoriaSelecionada(categoriaInicial)
       setLoading(false)
