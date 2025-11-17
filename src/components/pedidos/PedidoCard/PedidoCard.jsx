@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import PedidoItem from "@/components/pedidos/PedidoItem/PedidoItem"
 import { formatDate } from "@/lib/utils"
-import { BackgroundParticles } from "@/components/ui/BackgroundParticles"
+
 
 export default function PedidoCard({ pedido }) {
   const status = getUpdatedStatus(pedido.status, pedido.criado_em)
@@ -17,7 +17,7 @@ export default function PedidoCard({ pedido }) {
       style={{ borderRadius: 'var(--radius-box, 1rem)' }}
     >
       <div className="card-body p-4 sm:p-5 md:p-6">
-        <BackgroundParticles />
+       
         {/* Cabeçalho */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
           <div className="flex flex-col xs:flex-row items-start xs:items-center gap-2 xs:gap-3">
