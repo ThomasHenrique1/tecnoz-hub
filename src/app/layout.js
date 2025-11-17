@@ -1,6 +1,7 @@
 import { CarrinhoProvider } from "@/context/CarrinhoContext"
 import Navbar from "@/components/Navbar/Navbar"
 import Footer from "@/components/Footer/Footer"
+import { ErrorProvider } from "@/context/ErrorProvider"
 import './globals.css'
 
 export const metadata = {
@@ -73,9 +74,10 @@ export default function RootLayout({ children }) {
           
           {/* Footer */}
           <Footer />
-          
+          <ErrorProvider />
 
         </CarrinhoProvider>
+        
       </body>
     </html>
   )
