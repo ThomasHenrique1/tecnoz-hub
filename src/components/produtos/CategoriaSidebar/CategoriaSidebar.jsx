@@ -6,7 +6,7 @@ export default function CategoriaSidebar({
 }) {
   return (
     <aside className="lg:w-80"> {/* Largura fixa mais generosa */}
-      <div className="bg-base-200 rounded-2xl p-6 shadow-lg border border-base-300 sticky top-24 h-fit">
+      <div className="bg-base-200 rounded-2xl p-6 shadow-lg border border-base-300 ">
         {/* Header mais elegante */}
         <div className="mb-8">
           <h2 className="text-xl font-bold text-base-content mb-2 flex items-center gap-3">
