@@ -220,7 +220,7 @@ export default function ContactPage() {
                 </p>
 
                 {submitMessage && (
-                  <div className="bg-success/20 text-success-content p-4 rounded-xl mb-6">
+                  <div className="bg-success text-success-content p-4 rounded-xl mb-6 text-white">
                     {submitMessage}
                   </div>
                 )}
