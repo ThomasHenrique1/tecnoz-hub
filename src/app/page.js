@@ -32,7 +32,7 @@ export default function HomePage() {
     { name: "Placa-Mãe", icon: BsFillMotherboardFill, count: "32 produtos" },
     { name: "Memória RAM", icon: FaMemory, count: "28 produtos" },
     { name: "Cooler", icon: FaFan, count: "15 produtos" },
-    { name: "FAN", icon: FaFan, count: "12 produtos" },
+    { name: "Fan", icon: FaFan, count: "12 produtos" },
     { name: "Mouse", icon: FaMouse, count: "45 produtos" },
     { name: "Teclado", icon: FaKeyboard, count: "38 produtos" },
     { name: "Fone", icon: FaHeadphones, count: "52 produtos" },
