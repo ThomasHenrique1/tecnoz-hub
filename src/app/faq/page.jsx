@@ -15,6 +15,8 @@ import {
   FaBox
 } from "react-icons/fa"
 import { BackgroundParticles } from "@/components/ui/BackgroundParticles"
+import Button from "@/components/ui/Button"
+
 
 export default function FAQPage() {
   const [activeCategory, setActiveCategory] = useState("pedidos")
@@ -242,17 +244,17 @@ export default function FAQPage() {
                     const isOpen = openItems[item.id]
                     return (
                       <div key={item.id} className="bg-base-200 rounded-2xl overflow-hidden">
-                        <button
-                          onClick={() => toggleItem(item.id)}
-                          className="w-full text-left p-6 flex items-center justify-between gap-4 hover:bg-base-300 transition-colors"
+                        <Button
+                        iconRight={isOpen ? <FaChevronUp /> : <FaChevronDown />}
+                        variant="ghost"
+                        size="lg"
+                        fullWidth
+                        onClick={() => toggleItem(item.id)}
+                        className="w-full text-left p-8 flex items-center justify-between gap-4 hover:bg-base-300 transition-colors"
                         >
                           <span className="font-medium text-base-content">{item.question}</span>
-                          {isOpen ? (
-                            <FaChevronUp className="w-4 h-4 flex-shrink-0 text-primary" />
-                          ) : (
-                            <FaChevronDown className="w-4 h-4 flex-shrink-0 text-base-content/70" />
-                          )}
-                        </button>
+                        </Button>
+                        
                         
                         {isOpen && (
                           <div className="p-6 pt-0 border-t border-base-300">
