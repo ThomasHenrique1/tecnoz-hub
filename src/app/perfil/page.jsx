@@ -5,6 +5,7 @@ import { createClient } from '@/lib/supabaseClient'
 import { useRouter } from 'next/navigation'
 import { ProfileAvatar } from '@/components/perfil/ProfileAvatar/ProfileAvatar'
 import { ProfileFormField } from '@/components/perfil/ProfileFormField/ProfileFormField'
+import Button from '@/components/ui/Button'
 
 const initialFormState = {
   nome: '',
@@ -183,9 +184,13 @@ export default function PerfilPage() {
             />
 
             <div className="card-actions justify-end mt-6">
-              <button type="submit" className="btn btn-primary">
+              <Button
+                type="submit"
+                className="btn btn-primary"
+              >
                 Salvar Alterações
-              </button>
+              </Button>
+
             </div>
           </form>
         </div>
