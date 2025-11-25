@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { createClient } from "@/lib/supabaseClient"
@@ -24,18 +24,41 @@ export default function ProdutoCard({ produto }) {
   const adicionarAoCarrinho = async () => {
     setAdicionando(true)
 
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser()
-
-    if (userError || !user) {
-      setShowAuthModal(true)
-      setAdicionando(false)
-      return
-    }
-
     try {
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser()
+
+      if (userError || !user) {
+        setShowAuthModal(true)
+        setAdicionando(false)
+        return
+      }
+
+      // Buscar estoque real do produto antes de qualquer inserção/atualização
+      const { data: produtoAtual, error: produtoErr } = await supabase
+        .from("produtos")
+        .select("estoque, disponivel")
+        .eq("id", produto.id)
+        .single()
+
+      if (produtoErr) {
+        console.error("Erro ao buscar produto atual:", produtoErr)
+        setErrorMessage("Não foi possível verificar o estoque do produto. Tente novamente.")
+        setShowErrorModal(true)
+        setAdicionando(false)
+        return
+      }
+
+      // Bloquear se indisponível ou estoque 0
+      if (produtoAtual.disponivel === false || (produtoAtual.estoque ?? 0) === 0) {
+        setErrorMessage("Este produto está esgotado no momento.")
+        setShowErrorModal(true)
+        setAdicionando(false)
+        return
+      }
+
       // Verifica se já existe no carrinho
       const { data: existente, error: buscaErro } = await supabase
         .from("carrinho")
@@ -49,15 +72,31 @@ export default function ProdutoCard({ produto }) {
       }
 
       if (existente) {
+        // Calcular nova quantidade e validar estoque atual
+        const novaQuantidade = existente.quantidade + 1
+        if (novaQuantidade > (produtoAtual.estoque ?? 0)) {
+          setErrorMessage("Quantidade solicitada excede o estoque disponível.")
+          setShowErrorModal(true)
+          setAdicionando(false)
+          return
+        }
+
         // Atualiza quantidade
         const { error: updateError } = await supabase
           .from("carrinho")
-          .update({ quantidade: existente.quantidade + 1 })
+          .update({ quantidade: novaQuantidade })
           .eq("id", existente.id)
 
         if (updateError) throw updateError
       } else {
-        // Insere novo
+        // Inserir novo: valida estoque >= 1
+        if ((produtoAtual.estoque ?? 0) < 1) {
+          setErrorMessage("Este produto está esgotado.")
+          setShowErrorModal(true)
+          setAdicionando(false)
+          return
+        }
+
         const { error: insertError } = await supabase.from("carrinho").insert([
           {
             usuario_id: user.id,
