@@ -143,10 +143,3 @@ SOFTWARE.
 * Start: `npm run start`
 
 ---
-
-Se quiser, eu:
-
-* gero o `README.md` pronto e com mais seções (ex.: exemplos de .env, endpoints API, estrutura de tabelas do Supabase);
-* crio também um `CONTRIBUTING.md` e `LICENSE`.
-
-Diga qual opção prefere e eu já crio os arquivos.
