@@ -1,6 +1,6 @@
 # TecnozHub
 
-**Resumo (curto e direto):**
+**Resumo:**
 Loja e-commerce de hardware construída com Next.js (App Router) e Supabase. Funcionalidades principais: catálogo de produtos, carrinho com atualização em tempo real, painel administrativo (CRUD de produtos e gerenciamento de pedidos), autenticação via Supabase e upload de avatares. Projeto organizado em `src/` com foco em separação de responsabilidades.
 
 ---
